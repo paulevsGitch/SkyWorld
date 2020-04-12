@@ -4,11 +4,13 @@ import java.util.Locale;
 
 import net.minecraft.structure.StructurePieceType;
 import net.minecraft.util.registry.Registry;
+import paulevs.skyworld.structures.piece.ConeIslandPiece;
 import paulevs.skyworld.structures.piece.FlatSphereIslandPiece;
 
 public class StructureTypes
 {
 	public static final StructurePieceType FLAT_SPHERE_ISLAND = register(FlatSphereIslandPiece::new, "flat_sphere_island");
+	public static final StructurePieceType CONE_ISLAND = register(ConeIslandPiece::new, "cone_island");
 	
 	public static void init()
 	{

@@ -12,12 +12,11 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.feature.DefaultFeatureConfig;
 import net.minecraft.world.gen.feature.StructureFeature;
-import paulevs.skyworld.math.MHelper;
-import paulevs.skyworld.structures.piece.FlatSphereIslandPiece;
+import paulevs.skyworld.structures.piece.ConeIslandPiece;
 
-public class FlatSphereIslandFeature extends IslandFeature
+public class ConeIslandFeature extends IslandFeature
 {
-	public FlatSphereIslandFeature(Function<Dynamic<?>, ? extends DefaultFeatureConfig> configFactory)
+	public ConeIslandFeature(Function<Dynamic<?>, ? extends DefaultFeatureConfig> configFactory)
 	{
 		super(configFactory);
 		this.setDistance(4);
@@ -28,13 +27,13 @@ public class FlatSphereIslandFeature extends IslandFeature
 	@Override
 	public StructureStartFactory getStructureStartFactory()
 	{
-		return FlatSphereIslandStart::new;
+		return ConeIslandStart::new;
 	}
 
 	@Override
 	public String getName()
 	{
-		return "Flat Sphere Island";
+		return "Cone Island";
 	}
 
 	@Override
@@ -43,9 +42,9 @@ public class FlatSphereIslandFeature extends IslandFeature
 		return 3;
 	}
 	
-	public static class FlatSphereIslandStart extends StructureStart
+	public static class ConeIslandStart extends StructureStart
 	{
-		public FlatSphereIslandStart(StructureFeature<?> feature, int chunkX, int chunkZ, BlockBox box, int references, long l)
+		public ConeIslandStart(StructureFeature<?> feature, int chunkX, int chunkZ, BlockBox box, int references, long l)
 		{
 			super(feature, chunkX, chunkZ, box, references, l);
 		}
@@ -55,7 +54,7 @@ public class FlatSphereIslandFeature extends IslandFeature
 		{
 			int px = (x << 4);
 			int pz = (z << 4);
-			this.children.add(new FlatSphereIslandPiece(new BlockPos(px + random.nextInt(16), 64 + random.nextInt(64), pz + random.nextInt(16)), MHelper.getSquaredRange(10, 50, random), random));
+			this.children.add(new ConeIslandPiece(new BlockPos(px + random.nextInt(16), 64 + random.nextInt(64), pz + random.nextInt(16)), random.nextInt(30) + 5, random));
 			this.setBoundingBoxFromChildren();
 		}
 	}

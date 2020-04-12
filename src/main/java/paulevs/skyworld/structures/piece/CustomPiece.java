@@ -3,9 +3,12 @@ package paulevs.skyworld.structures.piece;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.structure.StructurePiece;
 import net.minecraft.structure.StructurePieceType;
+import net.minecraft.util.math.BlockPos.Mutable;
 
 public abstract class CustomPiece extends StructurePiece
 {
+	protected static final Mutable B_POS = new Mutable();
+	
 	protected CustomPiece(StructurePieceType type, int i)
 	{
 		super(type, i);

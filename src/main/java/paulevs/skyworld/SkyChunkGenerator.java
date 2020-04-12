@@ -13,6 +13,7 @@ import net.minecraft.world.gen.chunk.ChunkGeneratorType;
 import net.minecraft.world.gen.chunk.FloatingIslandsChunkGeneratorConfig;
 import net.minecraft.world.gen.feature.FeatureConfig;
 import net.minecraft.world.gen.feature.StructureFeature;
+import paulevs.skyworld.structures.features.StructureFeatures;
 
 public class SkyChunkGenerator extends ChunkGenerator<FloatingIslandsChunkGeneratorConfig>
 {
