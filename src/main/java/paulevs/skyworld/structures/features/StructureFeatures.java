@@ -16,8 +16,9 @@ import paulevs.skyworld.SkyWorld;
 public class StructureFeatures
 {
 	private static final List<StructureFeature<?>> FEATURES = new ArrayList<StructureFeature<?>>();
-	public static final StructureFeature<DefaultFeatureConfig> FLAT_SPHERE_ISLAND = register("flat_sphere_island", new FlatSphereIslandFeature(DefaultFeatureConfig::deserialize));
-	public static final StructureFeature<DefaultFeatureConfig> CONE_ISLAND = register("cone_island", new ConeIslandFeature(DefaultFeatureConfig::deserialize));
+	//public static final StructureFeature<DefaultFeatureConfig> FLAT_SPHERE_ISLAND = register("flat_sphere_island", new FlatSphereIslandFeature(DefaultFeatureConfig::deserialize));
+	//public static final StructureFeature<DefaultFeatureConfig> CONE_ISLAND = register("cone_island", new ConeIslandFeature(DefaultFeatureConfig::deserialize));
+	public static final StructureFeature<DefaultFeatureConfig> SKY_ISLAND = register("sky_island", new IslandFeature(DefaultFeatureConfig::deserialize));
 	
 	public static void register() {}
 	

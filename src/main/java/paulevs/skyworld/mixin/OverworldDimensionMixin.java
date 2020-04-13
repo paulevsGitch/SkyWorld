@@ -8,10 +8,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.biome.source.BiomeSource;
-import net.minecraft.world.biome.source.FixedBiomeSource;
-import net.minecraft.world.biome.source.FixedBiomeSourceConfig;
+import net.minecraft.world.biome.source.VanillaLayeredBiomeSource;
+import net.minecraft.world.biome.source.VanillaLayeredBiomeSourceConfig;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.dimension.OverworldDimension;
@@ -36,7 +35,8 @@ public abstract class OverworldDimensionMixin extends Dimension
 		LevelGeneratorType levelGeneratorType = this.world.getLevelProperties().getGeneratorType();
 		if (levelGeneratorType == SkyWorldType.SKY_WORLD)
 		{
-			BiomeSource biomeSource = new FixedBiomeSource(new FixedBiomeSourceConfig(null).setBiome(Biomes.BAMBOO_JUNGLE));
+			//BiomeSource biomeSource = new FixedBiomeSource(new FixedBiomeSourceConfig(null).setBiome(Biomes.BAMBOO_JUNGLE));
+			BiomeSource biomeSource = new VanillaLayeredBiomeSource(new VanillaLayeredBiomeSourceConfig(this.world.getLevelProperties()));
 			
 			FloatingIslandsChunkGeneratorConfig config = new FloatingIslandsChunkGeneratorConfig();
 			config.withCenter(new BlockPos(0, 64, 0));

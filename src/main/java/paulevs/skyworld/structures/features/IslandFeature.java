@@ -5,6 +5,10 @@ import java.util.function.Function;
 
 import com.mojang.datafixers.Dynamic;
 
+import net.minecraft.structure.StructureManager;
+import net.minecraft.structure.StructureStart;
+import net.minecraft.util.math.BlockBox;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.BiomeAccess;
@@ -13,8 +17,10 @@ import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.feature.DefaultFeatureConfig;
 import net.minecraft.world.gen.feature.StructureFeature;
 import paulevs.skyworld.SkyChunkGenerator;
+import paulevs.skyworld.math.MHelper;
+import paulevs.skyworld.structures.piece.IslandPiece;
 
-public abstract class IslandFeature extends StructureFeature<DefaultFeatureConfig>
+public class IslandFeature extends StructureFeature<DefaultFeatureConfig>
 {
 	private int salt;
 	private int distance;
@@ -23,6 +29,9 @@ public abstract class IslandFeature extends StructureFeature<DefaultFeatureConfi
 	public IslandFeature(Function<Dynamic<?>, ? extends DefaultFeatureConfig> configFactory)
 	{
 		super(configFactory);
+		salt = getName().hashCode();
+		distance = 4;
+		separation = 1;
 	}
 
 	@Override
@@ -66,5 +75,40 @@ public abstract class IslandFeature extends StructureFeature<DefaultFeatureConfi
 	protected void setSalt(int salt)
 	{
 		this.salt = salt;
+	}
+
+	@Override
+	public StructureStartFactory getStructureStartFactory()
+	{
+		return IslandStart::new;
+	}
+
+	@Override
+	public String getName()
+	{
+		return "sky_island";
+	}
+
+	@Override
+	public int getRadius()
+	{
+		return 4;
+	}
+	
+	public static class IslandStart extends StructureStart
+	{
+		public IslandStart(StructureFeature<?> feature, int chunkX, int chunkZ, BlockBox box, int references, long l)
+		{
+			super(feature, chunkX, chunkZ, box, references, l);
+		}
+
+		@Override
+		public void initialize(ChunkGenerator<?> chunkGenerator, StructureManager structureManager, int x, int z, Biome biome)
+		{
+			int px = (x << 4);
+			int pz = (z << 4);
+			this.children.add(new IslandPiece(new BlockPos(px + random.nextInt(16), 64 + random.nextInt(64), pz + random.nextInt(16)), MHelper.getSquaredRange(10, 50, random), random));
+			this.setBoundingBoxFromChildren();
+		}
 	}
 }

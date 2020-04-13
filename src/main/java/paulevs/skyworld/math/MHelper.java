@@ -2,6 +2,7 @@ package paulevs.skyworld.math;
 
 import java.util.Random;
 
+import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import paulevs.skyworld.noise.OpenSimplexNoise;
@@ -32,5 +33,16 @@ public class MHelper
 			result = MathHelper.lerp(delta, result, noise(pos, scale));
 		}
 		return result;
+	}
+	
+	public static BlockBox intersection(BlockBox box1, BlockBox box2)
+	{
+		int x1 = Math.max(box1.minX, box2.minX);
+		int y1 = Math.max(box1.minY, box2.minY);
+		int z1 = Math.max(box1.minZ, box2.minZ);
+		int x2 = Math.min(box1.maxX, box2.maxX);
+		int y2 = Math.min(box1.maxY, box2.maxY);
+		int z2 = Math.min(box1.maxZ, box2.maxZ);
+		return new BlockBox(x1, y1, z1, x2, y2, z2);
 	}
 }

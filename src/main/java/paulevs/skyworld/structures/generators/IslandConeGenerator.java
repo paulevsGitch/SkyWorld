@@ -1,0 +1,98 @@
+package paulevs.skyworld.structures.generators;
+
+import java.util.List;
+import java.util.Random;
+
+import net.minecraft.util.math.BlockBox;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.gen.GenerationStep.Feature;
+import net.minecraft.world.gen.chunk.ChunkGenerator;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
+import net.minecraft.world.gen.surfacebuilder.SurfaceConfig;
+import paulevs.skyworld.math.MHelper;
+import paulevs.skyworld.math.SDF;
+
+public class IslandConeGenerator extends IslandGenerator
+{
+	private float noisePower;
+	private float noiseScale;
+	private BlockPos cone1Pos;
+	private BlockPos cone2Pos;
+	private int h1;
+	private int h2;
+	private float r2;
+	private float r3;
+	private float blend;
+	
+	@Override
+	public void initValues(BlockPos center, int radius)
+	{
+		this.h1 = (int) Math.ceil(radius * 0.125F);
+		this.h2 = radius - h1;
+		this.cone1Pos = center.down(h1);
+		this.cone2Pos = center.down(h1 + h2);
+		this.r2 = radius * 0.5F;
+		this.r3 = radius * 0.05F;
+		this.blend = radius * 0.5F;
+		this.noisePower = radius * 0.15F;
+		this.noiseScale = 0.5F / (float) Math.log(radius);
+	}
+
+	@Override
+	public void setBoundingBox(BlockBox box, BlockPos center, int radius)
+	{
+		box.minX = center.getX() - radius;
+		box.minY = center.getY() - radius * 2;
+		box.minZ = center.getZ() - radius;
+		box.maxX = center.getX() + radius;
+		box.maxY = center.getY() + radius / 8;
+		box.maxZ = center.getZ() + radius;
+	}
+
+	@Override
+	public void generate(IWorld world, ChunkGenerator<?> generator, Random random, BlockBox box, ChunkPos pos, BlockPos center, int radius)
+	{
+		for (int x = box.minX; x <= box.maxX; x++)
+		{
+			B_POS.setX(x);
+			for (int z = box.minZ; z <= box.maxZ; z++)
+			{
+				B_POS.setZ(z);
+				SurfaceConfig config = world.getBiome(B_POS).getSurfaceConfig();
+				int h = random.nextInt(3) + 2;
+				for (int y = box.maxY; y >= box.minY; y--)
+				{
+					B_POS.setY(y);
+					float d = SDF.smoothUnion(SDF.coneSDF(B_POS, cone1Pos, h1, r2, radius), SDF.coneSDF(B_POS, cone2Pos, h2, r3, r2), blend);
+					if (d < 0)
+					{
+						d += MHelper.noise(B_POS, noiseScale) * noisePower;
+						if (d < 0)
+						{
+							if (isAir(world, B_POS.up()))
+								world.setBlockState(B_POS, config.getTopMaterial(), 0);
+							else if (isAir(world, B_POS.up(h)))
+								world.setBlockState(B_POS, config.getUnderMaterial(), 0);
+							else
+								world.setBlockState(B_POS, STONE, 0);
+						}
+					}
+				}
+			}
+		}
+		B_POS.set(box.minX, 0, box.minZ);
+		List<ConfiguredFeature<?,?>> ores = world.getBiome(B_POS).getFeaturesForStep(Feature.UNDERGROUND_ORES);
+		for (ConfiguredFeature<?,?> feature: ores)
+		{
+			feature.generate(world, generator, random, B_POS);
+		}
+	}
+
+	@Override
+	public String getName()
+	{
+		return "cone";
+	}
+}
