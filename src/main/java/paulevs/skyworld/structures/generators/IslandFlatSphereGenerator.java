@@ -1,15 +1,12 @@
 package paulevs.skyworld.structures.generators;
 
-import java.util.List;
 import java.util.Random;
 
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.gen.GenerationStep.Feature;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
-import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.surfacebuilder.SurfaceConfig;
 import paulevs.skyworld.math.MHelper;
 import paulevs.skyworld.math.SDF;
@@ -70,14 +67,7 @@ public class IslandFlatSphereGenerator extends IslandGenerator
 				}
 			}
 		}
-		B_POS.set(box.minX, 0, box.minZ);
-		List<ConfiguredFeature<?,?>> ores = world.getBiome(B_POS).getFeaturesForStep(Feature.UNDERGROUND_ORES);
-		for (ConfiguredFeature<?,?> feature: ores)
-		{
-			//@SuppressWarnings("unchecked")
-			//ConfiguredFeature<OreFeatureConfig, ?> ore = (ConfiguredFeature<OreFeatureConfig, ?>) feature;
-			feature.generate(world, generator, random, B_POS);
-		}
+		generateOres(box, world, random);
 	}
 
 	@Override

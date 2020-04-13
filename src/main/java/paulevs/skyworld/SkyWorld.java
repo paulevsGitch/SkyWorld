@@ -2,6 +2,7 @@ package paulevs.skyworld;
 
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
+import paulevs.skyworld.structures.StructureTypes;
 import paulevs.skyworld.structures.features.StructureFeatures;
 
 public class SkyWorld implements ModInitializer
@@ -11,6 +12,7 @@ public class SkyWorld implements ModInitializer
 	@Override
 	public void onInitialize()
 	{
+		StructureTypes.register();
 		SkyChunkGenerator.register();
 		SkyWorldType.register();
 		StructureFeatures.register();

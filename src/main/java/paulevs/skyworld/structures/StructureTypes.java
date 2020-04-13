@@ -10,7 +10,7 @@ public class StructureTypes
 {
 	public static final StructurePieceType SKY_ISLAND = register(IslandPiece::new, "sky_island");
 	
-	public static void init()
+	public static void register()
 	{
 		
 	}

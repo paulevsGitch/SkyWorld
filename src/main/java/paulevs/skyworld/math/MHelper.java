@@ -45,4 +45,9 @@ public class MHelper
 		int z2 = Math.min(box1.maxZ, box2.maxZ);
 		return new BlockBox(x1, y1, z1, x2, y2, z2);
 	}
+	
+	public static int randRange(int min, int max, Random random)
+	{
+		return min + random.nextInt(max - min + 1);
+	}
 }
