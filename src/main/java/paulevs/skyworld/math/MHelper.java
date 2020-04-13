@@ -10,6 +10,7 @@ import paulevs.skyworld.noise.OpenSimplexNoise;
 public class MHelper
 {
 	private static final OpenSimplexNoise NOISE = new OpenSimplexNoise(0);
+	public static final float PI2 = 2 * (float) Math.PI;
 	
 	public static int getSquaredRange(int min, int max, Random random)
 	{
@@ -49,5 +50,17 @@ public class MHelper
 	public static int randRange(int min, int max, Random random)
 	{
 		return min + random.nextInt(max - min + 1);
+	}
+	
+	public static Vector2F getSpiral(float x, float dx, float dr, float offsetX, float offsetR, Vector2F result)
+	{
+		float a = x * dr + offsetR;
+		float b = x * dx + offsetX;
+		return result.set(a * (float) Math.cos(b), a * (float) Math.sin(b));
+	}
+	
+	public static float randRange(float min, float max, Random random)
+	{
+		return min + random.nextFloat() * (max - min);
 	}
 }

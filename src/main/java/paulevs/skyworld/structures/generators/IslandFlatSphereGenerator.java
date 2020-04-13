@@ -32,7 +32,7 @@ public class IslandFlatSphereGenerator extends IslandGenerator
 		box.minY = center.getY() - radius;
 		box.minZ = center.getZ() - radius;
 		box.maxX = center.getX() + radius;
-		box.maxY = center.getY() + radius;
+		box.maxY = center.getY() + radius / 2;
 		box.maxZ = center.getZ() + radius;
 	}
 
@@ -68,11 +68,5 @@ public class IslandFlatSphereGenerator extends IslandGenerator
 			}
 		}
 		generateOres(box, world, random);
-	}
-
-	@Override
-	public String getName()
-	{
-		return "flat_sphere";
 	}
 }

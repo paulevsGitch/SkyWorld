@@ -11,40 +11,28 @@ import net.minecraft.world.gen.surfacebuilder.SurfaceConfig;
 import paulevs.skyworld.math.MHelper;
 import paulevs.skyworld.math.SDF;
 
-public class IslandConeGenerator extends IslandGenerator
+public class IslandSphereGenerator extends IslandGenerator
 {
+	private int octaves;
 	private float noisePower;
 	private float noiseScale;
-	private BlockPos cone1Pos;
-	private BlockPos cone2Pos;
-	private int h1;
-	private int h2;
-	private float r2;
-	private float r3;
-	private float blend;
 	
 	@Override
 	public void initValues(BlockPos center, int radius)
 	{
-		this.h1 = (int) Math.ceil(radius * 0.125F);
-		this.h2 = radius - h1;
-		this.cone1Pos = center.down(h1);
-		this.cone2Pos = center.down(h1 + h2);
-		this.r2 = radius * 0.5F;
-		this.r3 = radius * 0.1F;
-		this.blend = radius * 0.5F;
-		this.noisePower = radius * 0.15F;
-		this.noiseScale = 0.5F / (float) Math.log(radius);
+		this.octaves = (int) Math.round(Math.log(radius * 0.25));
+		this.noisePower = (float) Math.log(radius) * 13F;
+		this.noiseScale = 0.2F / (float) Math.log(radius);
 	}
 
 	@Override
 	public void setBoundingBox(BlockBox box, BlockPos center, int radius)
 	{
 		box.minX = center.getX() - radius;
-		box.minY = center.getY() - radius * 2;
+		box.minY = center.getY() - radius;
 		box.minZ = center.getZ() - radius;
 		box.maxX = center.getX() + radius;
-		box.maxY = center.getY() + radius / 8;
+		box.maxY = center.getY() + radius;
 		box.maxZ = center.getZ() + radius;
 	}
 
@@ -62,10 +50,10 @@ public class IslandConeGenerator extends IslandGenerator
 				for (int y = box.maxY; y >= box.minY; y--)
 				{
 					B_POS.setY(y);
-					float d = SDF.smoothUnion(SDF.coneSDF(B_POS, cone1Pos, h1, r2, radius), SDF.coneSDF(B_POS, cone2Pos, h2, r3, r2), blend);
+					float d = SDF.sphereSDF(B_POS, center, radius);
 					if (d < 0)
 					{
-						d += MHelper.noise(B_POS, noiseScale) * noisePower;
+						d += MHelper.noise(B_POS, noiseScale, octaves) * noisePower;
 						if (d < 0)
 						{
 							if (isAir(world, B_POS.up()))

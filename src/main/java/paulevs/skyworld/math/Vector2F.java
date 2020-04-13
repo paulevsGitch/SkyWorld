@@ -106,7 +106,7 @@ public class Vector2F
 		return this;
 	}
 	
-	public Vector2F set(float x, float y, float z)
+	public Vector2F set(float x, float y)
 	{
 		this.x = x;
 		this.y = y;
