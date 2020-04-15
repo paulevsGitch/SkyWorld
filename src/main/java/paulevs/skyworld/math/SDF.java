@@ -31,14 +31,27 @@ public class SDF
 		return s * (float) Math.sqrt(Math.min(ca.dot(ca), cb.dot(cb)));
 	}
 	
+	public static float smoothUnion(float d1, float d2, float k)
+	{
+		float h = MathHelper.clamp(0.5F + 0.5F * (d2 - d1) / k, 0F, 1F);
+		return MathHelper.lerp(h, d2, d1) - k * h * (1F - h);
+	}
+	
+	public static float sdfEllipsoid(BlockPos pos, BlockPos center, float rx, float ry, float rz)
+	{
+		BlockPos bpos = pos.subtract(center);
+		float k0 = length(bpos.getX() / rx, bpos.getY() / ry, bpos.getZ() / rz);
+		float k1 = length(bpos.getX() / (rx * rx), bpos.getY() / (ry * ry), bpos.getZ() / (rz * rz));
+		return k0 * (k0 - 1) / k1;
+	}
+	
 	public static float length(float a, float b)
 	{
 		return (float) Math.sqrt(a * a + b * b);
 	}
 	
-	public static float smoothUnion(float d1, float d2, float k)
+	public static float length(float a, float b, float c)
 	{
-		float h = MathHelper.clamp(0.5F + 0.5F * (d2 - d1) / k, 0F, 1F);
-		return MathHelper.lerp(h, d2, d1) - k * h * (1F - h);
+		return (float) Math.sqrt(a * a + b * b + c * c);
 	}
 }

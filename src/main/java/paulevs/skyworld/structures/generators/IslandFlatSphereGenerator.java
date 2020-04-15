@@ -39,6 +39,7 @@ public class IslandFlatSphereGenerator extends IslandGenerator
 	@Override
 	public void generate(IWorld world, ChunkGenerator<?> generator, Random random, BlockBox box, ChunkPos pos, BlockPos center, int radius)
 	{
+		resetHeightMap();
 		for (int x = box.minX; x <= box.maxX; x++)
 		{
 			B_POS.setX(x);
@@ -57,7 +58,10 @@ public class IslandFlatSphereGenerator extends IslandGenerator
 						if (d < 0)
 						{
 							if (isAir(world, B_POS.up()))
+							{
 								world.setBlockState(B_POS, config.getTopMaterial(), 0);
+								setHeight(x - box.minX, z - box.minZ, y);
+							}
 							else if (isAir(world, B_POS.up(h)))
 								world.setBlockState(B_POS, config.getUnderMaterial(), 0);
 							else
@@ -68,5 +72,6 @@ public class IslandFlatSphereGenerator extends IslandGenerator
 			}
 		}
 		generateOres(box, world, random);
+		generateBushes(box, world, random);
 	}
 }

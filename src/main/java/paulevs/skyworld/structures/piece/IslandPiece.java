@@ -21,12 +21,12 @@ public class IslandPiece extends CustomPiece
 	private BlockPos center;
 	private int radius;
 	
-	public IslandPiece(BlockPos center, int radius, Random random, String generator)
+	public IslandPiece(BlockPos center, int radius, Random random, IslandGenerator generator)
 	{
 		super(StructureTypes.SKY_ISLAND, random.nextInt());
 		this.center = center;
 		this.radius = radius;
-		this.generator = Generators.getGenerator(generator);
+		this.generator = generator;
 		this.generator.initValues(center, radius);
 		makeBoundingBox();
 	}

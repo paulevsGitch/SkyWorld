@@ -36,6 +36,24 @@ public class MHelper
 		return result;
 	}
 	
+	public static float rigidNoise(BlockPos pos, double scale)
+	{
+		return (float) Math.abs(NOISE.eval(pos.getX() * scale, pos.getY() * scale, pos.getZ() * scale));
+	}
+	
+	public static float rigidNoise(BlockPos pos, double scale, int octaves)
+	{
+		float result = rigidNoise(pos, scale);
+		float delta = 0.6F;
+		for (int i = 0; i < octaves; i++)
+		{
+			scale *= 2;
+			delta *= 0.5F;
+			result = MathHelper.lerp(delta, result, rigidNoise(pos, scale));
+		}
+		return result;
+	}
+	
 	public static BlockBox intersection(BlockBox box1, BlockBox box2)
 	{
 		int x1 = Math.max(box1.minX, box2.minX);

@@ -33,6 +33,7 @@ public class Generators
 		register("cone", IslandConeGenerator.class);
 		register("sphere", IslandSphereGenerator.class);
 		register("double_cone", IslandDoubleConeGenerator.class);
+		register("tall_sphere", IslandTallSphereGenerator.class);
 	}
 	
 	private static void register(String name, Class<? extends IslandGenerator> generator)
@@ -41,8 +42,8 @@ public class Generators
 		GENERATOR_LIST.add(name);
 	}
 
-	public static String getGenerator(Random random)
+	public static IslandGenerator getGenerator(Random random)
 	{
-		return GENERATOR_LIST.get(random.nextInt(GENERATOR_LIST.size()));
+		return getGenerator(GENERATOR_LIST.get(random.nextInt(GENERATOR_LIST.size())));
 	}
 }

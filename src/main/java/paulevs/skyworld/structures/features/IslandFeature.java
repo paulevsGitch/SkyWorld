@@ -20,6 +20,7 @@ import paulevs.skyworld.SkyChunkGenerator;
 import paulevs.skyworld.math.MHelper;
 import paulevs.skyworld.math.Vector2F;
 import paulevs.skyworld.structures.generators.Generators;
+import paulevs.skyworld.structures.generators.IslandGenerator;
 import paulevs.skyworld.structures.piece.IslandPiece;
 
 public class IslandFeature extends StructureFeature<DefaultFeatureConfig>
@@ -109,35 +110,23 @@ public class IslandFeature extends StructureFeature<DefaultFeatureConfig>
 		{
 			int px = (x << 4);
 			int pz = (z << 4);
-			BlockPos center = new BlockPos(px + random.nextInt(16), 64 + random.nextInt(64), pz + random.nextInt(16));
-			int radius = MHelper.getSquaredRange(10, 50, random);
-			String generator = Generators.getGenerator(random);
+			IslandGenerator generator = Generators.getGenerator(random);
+			int radius = MHelper.getSquaredRange(generator.getMinSize(), generator.getMaxSize(), random);
+			BlockPos center = new BlockPos(px + random.nextInt(16), MHelper.randRange(radius + 16, 128, random), pz + random.nextInt(16));
 			this.children.add(new IslandPiece(center, radius, random, generator));
 			if (radius > 30 && random.nextBoolean()) // archipelago
 			{
-				/*int count = MHelper.randRange(2, radius / 5, random);
-				float angle = random.nextFloat() * 2 * (float) Math.PI;
-				float offset = 0.75F;
-				for (int i = 0; i < count; i++)
-				{
-					float mult = radius * 1.4F + i * radius * 0.3F;
-					angle += offset;
-					offset *= 0.9F;
-					int dx = (int) (Math.cos(angle) * mult);
-					int dz = (int) (Math.sin(angle) * mult);
-					int rad = (int) ((count - i) * radius * 0.75 / count);
-					int yDelta = (int) (radius * 0.1);
-					BlockPos childPos = center.add(dx, MHelper.randRange(-yDelta, yDelta, random) - i * yDelta, dz);
-					this.children.add(new IslandPiece(childPos, MHelper.getSquaredRange(rad / 2, rad, random), random, generator));
-				}*/
 				int spirals = MHelper.randRange(1, 3, random);
 				float startAngle = random.nextFloat() * MHelper.PI2;
-				float dx = MHelper.randRange(0.2F, 0.8F, random);
+				float dx = MHelper.randRange(0.4F, 0.8F, random);
 				float dr = MHelper.randRange(0.4F, 0.8F, random) * radius;
-				float offsetR = MHelper.randRange(radius * 1.3F, radius * 1.5F, random);
+				float offsetR = MHelper.randRange(radius * 1.3F, radius * 1.5F, random) * generator.groupDistanceMultiplier();
 				Vector2F offset = new Vector2F();
 				int yDelta = (int) (radius * 0.1);
 				float xDist = 0.0256F * dx + 0.7949F;
+				//xDist *= generator.getSpiralPower();
+				//dx *= generator.getSpiralPower();
+				//dr *= generator.getSpiralPower();
 				for (int s = 0; s < spirals; s++)
 				{
 					float offsetX = s * MHelper.PI2 /  spirals + startAngle;
@@ -147,7 +136,9 @@ public class IslandFeature extends StructureFeature<DefaultFeatureConfig>
 						MHelper.getSpiral(i * xDist, dx, dr, offsetX, offsetR, offset);
 						BlockPos childPos = center.add(offset.getX(), (MHelper.randRange(-yDelta, yDelta, random) - i * yDelta), offset.getY());
 						int rad = (int) ((count - i) * radius * 0.5 / count);
-						rad = MHelper.getSquaredRange(rad / 2, rad, random);
+						int max = Math.min(generator.getMinSize(), rad);
+						int min = Math.max(generator.getMinSize(), rad / 2);
+						rad = MHelper.getSquaredRange(min, max, random);
 						this.children.add(new IslandPiece(childPos, rad, random, generator));
 					}
 				}

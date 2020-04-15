@@ -7,6 +7,8 @@
 	"OverworldDimensionMixin"
   ],
   "client": [
+	"DimensionRenderMixin",
+	"WorldRenderMixin"
   ],
   "injectors": {
     "defaultRequire": 1
