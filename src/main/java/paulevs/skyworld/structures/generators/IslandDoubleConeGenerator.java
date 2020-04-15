@@ -57,7 +57,7 @@ public class IslandDoubleConeGenerator extends IslandGenerator
 	@Override
 	public void generate(IWorld world, ChunkGenerator<?> generator, Random random, BlockBox box, ChunkPos pos, BlockPos center, int radius)
 	{
-		resetHeightMap();
+		HEIGHTMAP.clear();
 		for (int x = box.minX; x <= box.maxX; x++)
 		{
 			B_POS.setX(x);
@@ -80,7 +80,7 @@ public class IslandDoubleConeGenerator extends IslandGenerator
 							if (isAir(world, B_POS.up()))
 							{
 								world.setBlockState(B_POS, config.getTopMaterial(), 0);
-								setHeight(x - box.minX, z - box.minZ, y);
+								HEIGHTMAP.addHeight(x - box.minX, y, z - box.minZ);
 							}
 							else if (isAir(world, B_POS.up(h)))
 								world.setBlockState(B_POS, config.getUnderMaterial(), 0);

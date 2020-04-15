@@ -1,6 +1,5 @@
 package paulevs.skyworld.structures.generators;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -32,12 +31,11 @@ import net.minecraft.world.gen.feature.RandomFeatureEntry;
 import paulevs.skyworld.math.MHelper;
 import paulevs.skyworld.structures.features.FoliagePair;
 
-@SuppressWarnings("unchecked")
 public abstract class IslandGenerator
 {
 	protected static final BlockState STONE = Blocks.STONE.getDefaultState();
 	protected static final Mutable B_POS = new Mutable();
-	protected static final List<Integer>[][] HEIGHTMAP;
+	protected static final VolumetricHeightmap HEIGHTMAP = new VolumetricHeightmap();
 	protected String name;
 	
 	public abstract void initValues(BlockPos center, int radius);
@@ -62,18 +60,6 @@ public abstract class IslandGenerator
 		return this;
 	}
 	
-	protected void resetHeightMap()
-	{
-		for (int x = 0; x < 16; x++)
-			for (int z = 0; z < 16; z++)
-				HEIGHTMAP[x][z].clear();
-	}
-	
-	protected void setHeight(int x, int z, int height)
-	{
-		HEIGHTMAP[x][z].add(height);
-	}
-	
 	protected void generateBushes(BlockBox box, IWorld world, Random random)
 	{
 		B_POS.set(box.minX + 8, 0, box.minZ + 8);
@@ -81,17 +67,23 @@ public abstract class IslandGenerator
 		if (!pairs.isEmpty())
 		{
 			FoliagePair[] pairArr = pairs.toArray(new FoliagePair[] {});
-			for (int i = 0; i < 4; i++)
+			int sectionStart = VolumetricHeightmap.getSection(box.minY);
+			int sectionEnd = VolumetricHeightmap.getSection(box.maxY);
+			for (int section = sectionStart; section <= sectionEnd; section++)
 			{
-				B_POS.setX(MHelper.randRange(box.minX, box.maxX, random));
-				B_POS.setZ(MHelper.randRange(box.minZ, box.maxZ, random));
-				int hx = B_POS.getX() - box.minX;
-				int hz = B_POS.getZ() - box.minZ;
-				if (!HEIGHTMAP[hx][hz].isEmpty())
+				for (int i = 0; i < 4; i++)
 				{
-					B_POS.setY(HEIGHTMAP[hx][hz].get(random.nextInt(HEIGHTMAP[hx][hz].size())));
-					FoliagePair pair = pairArr[random.nextInt(pairArr.length)];
-					makeBush(world, B_POS.toImmutable(), pair, random);
+					B_POS.setX(MHelper.randRange(box.minX, box.maxX, random));
+					B_POS.setZ(MHelper.randRange(box.minZ, box.maxZ, random));
+					int hx = B_POS.getX() - box.minX;
+					int hz = B_POS.getZ() - box.minZ;
+					int h = HEIGHTMAP.getRandomHeight(hx, hz, section, random);
+					if (h > 0)
+					{
+						B_POS.setY(h + 1);
+						FoliagePair pair = pairArr[random.nextInt(pairArr.length)];
+						makeBush(world, B_POS.toImmutable(), pair, random);
+					}
 				}
 			}
 		}
@@ -230,13 +222,5 @@ public abstract class IslandGenerator
 	public float getSpiralPower()
 	{
 		return 1;
-	}
-	
-	static
-	{
-		HEIGHTMAP = new ArrayList[16][16];
-		for (int x = 0; x < 16; x++)
-			for (int z = 0; z < 16; z++)
-				HEIGHTMAP[x][z] = new ArrayList<Integer>();
 	}
 }
