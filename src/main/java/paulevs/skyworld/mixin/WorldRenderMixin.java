@@ -3,15 +3,11 @@ package paulevs.skyworld.mixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-
 import net.minecraft.client.options.CloudRenderMode;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.WorldRenderer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -23,21 +19,13 @@ public class WorldRenderMixin
 	private ClientWorld world;
 	
 	@Shadow
-	private int ticks;
-	
-	@Shadow
 	private CloudRenderMode lastCloudsRenderMode;
 	
-	@Inject(method = "renderClouds(Lnet/minecraft/client/util/math/MatrixStack;FDDD)V", at = @At(
-			value = "INVOKE",
-			target = "Lnet/minecraft/client/render/WorldRenderer;renderClouds(Lnet/minecraft/client/render/BufferBuilder;DDDLnet/minecraft/util/math/Vec3d;)V",
-			shift = Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
-	private void clouds(MatrixStack matrices, float tickDelta, double cameraX, double cameraY, double cameraZ, CallbackInfo info,
-			float f, float g, double d, double e, double h, double i, double j, float k, float l, float m, Vec3d vec3d, BufferBuilder bufferBuilder)//, double h, double i, double j, Vec3d vec3d)
+	@Inject(method = "renderClouds(Lnet/minecraft/client/render/BufferBuilder;DDDLnet/minecraft/util/math/Vec3d;)V", at = @At("RETURN"))
+	private void clouds(BufferBuilder builder, double x, double y, double z, Vec3d color, CallbackInfo info)
 	{
-		//System.out.println(h + " " + h * 0.00390625F);
-		renderCloudsBuf(bufferBuilder, h, i - 16, j, vec3d, 5, 7);
-		renderCloudsBuf(bufferBuilder, h, i + 16, j, vec3d, -3, -2);
+		renderCloudsBuf(builder, x, y - 16, z, color, 5, 7);
+		renderCloudsBuf(builder, x, y + 16, z, color, -6, -4);
 	}
 	
 	private void renderCloudsBuf(BufferBuilder builder, double x, double y, double z, Vec3d color, int offsetX, int offsetY)
