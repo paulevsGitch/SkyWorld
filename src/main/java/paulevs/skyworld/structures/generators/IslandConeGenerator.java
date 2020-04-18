@@ -83,7 +83,7 @@ public class IslandConeGenerator extends IslandGenerator
 				}
 			}
 		}
-		generateOres(box, world, random);
+		generateOres(box, world, random, radius);
 		generateBushes(box, world, random);
 	}
 }

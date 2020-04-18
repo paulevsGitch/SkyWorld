@@ -47,7 +47,9 @@ public class IslandDoubleConeGenerator extends IslandGenerator
 	public void setBoundingBox(BlockBox box, BlockPos center, int radius)
 	{
 		box.minX = center.getX() - radius;
-		box.minY = center.getY() - radius * 2;
+		box.minY = center.getY() - radius * 3;
+		if (box.minY < 0)
+			box.minY = 0;
 		box.minZ = center.getZ() - radius;
 		box.maxX = center.getX() + radius;
 		box.maxY = center.getY() + radius;
@@ -57,6 +59,14 @@ public class IslandDoubleConeGenerator extends IslandGenerator
 	@Override
 	public void generate(IWorld world, ChunkGenerator<?> generator, Random random, BlockBox box, ChunkPos pos, BlockPos center, int radius)
 	{
+		if ((box.minX >> 4) == 34 && (box.minZ >> 4) == -23)
+		{
+			System.out.println(radius);
+			System.out.println(center);
+			System.out.println(cone1Pos + " " + h1 + " " + r2);
+			System.out.println(cone2Pos + " " + h2 + " " + r3);
+		}
+		
 		HEIGHTMAP.clear();
 		for (int x = box.minX; x <= box.maxX; x++)
 		{
@@ -91,7 +101,7 @@ public class IslandDoubleConeGenerator extends IslandGenerator
 				}
 			}
 		}
-		generateOres(box, world, random);
+		generateOres(box, world, random, radius);
 		generateBushes(box, world, random);
 	}
 }

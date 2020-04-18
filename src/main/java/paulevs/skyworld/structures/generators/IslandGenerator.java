@@ -89,7 +89,7 @@ public abstract class IslandGenerator
 		}
 	}
 	
-	protected void generateOres(BlockBox box, IWorld world, Random random)
+	protected void generateOres(BlockBox box, IWorld world, Random random, int radius)
 	{
 		int oreRange = box.maxY - box.minY;
 		int middle = box.minY + oreRange / 2;
@@ -123,8 +123,12 @@ public abstract class IslandGenerator
 					{
 						continue;
 					}
+					if (radius < 20 && maxY < 30)
+						continue;
 					maxY = maxY > 30 ? box.maxY : middle;
 					count = MHelper.randRange(1, (int) Math.ceil(count * countCoef), random);
+					if (radius < 20 && count > 3)
+						count = 3;
 					for (int n = 0; n < count; n++)
 					{
 						B_POS.set(MHelper.randRange(box.minX, box.maxX, random), MHelper.randRange(box.minY, maxY, random), MHelper.randRange(box.minZ, box.maxZ, random));
@@ -170,8 +174,6 @@ public abstract class IslandGenerator
 	protected void makeBush(IWorld world, BlockPos pos, FoliagePair foliage, Random random)
 	{
 		int r = MHelper.randRange(1, 3, random);
-		//int r2 = r * r;
-		//int minR = r2 * 2 / 3;
 		int x1 = pos.getX() - r;
 		int x2 = pos.getX() + r;
 		int ry = (int) Math.ceil(r * 0.3F);
@@ -184,7 +186,7 @@ public abstract class IslandGenerator
 			B_POS.setY(y);
 			int r2 = r - Math.abs(y - pos.getY());
 			r2 *= r2;
-			int minR = r2 / 2;
+			int minR = r2 / 3;
 			for (int x = x1; x <= x2; x++)
 			{
 				B_POS.setX(x);
@@ -196,7 +198,7 @@ public abstract class IslandGenerator
 					int sqrZ = z - pos.getZ();
 					sqrZ *= sqrZ;
 					int sum = sqrX + sqrZ;
-					if (sum < 1.5 || sum <= MHelper.randRange(minR, r2, random) && world.isAir(B_POS))
+					if ((sum < 1.5 || sum <= MHelper.randRange(minR, r2, random)) && world.isAir(B_POS))
 						foliage.setLeaves(world, B_POS, random);
 				}
 			}

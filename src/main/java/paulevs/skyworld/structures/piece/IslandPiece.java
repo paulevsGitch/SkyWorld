@@ -24,10 +24,10 @@ public class IslandPiece extends CustomPiece
 	public IslandPiece(BlockPos center, int radius, Random random, IslandGenerator generator)
 	{
 		super(StructureTypes.SKY_ISLAND, random.nextInt());
-		this.center = center;
+		this.center = new BlockPos(center);
 		this.radius = radius;
 		this.generator = generator;
-		this.generator.initValues(center, radius);
+		this.generator.initValues(this.center, radius);
 		makeBoundingBox();
 	}
 	

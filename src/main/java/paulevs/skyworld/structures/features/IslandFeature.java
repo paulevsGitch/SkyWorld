@@ -139,7 +139,7 @@ public class IslandFeature extends StructureFeature<DefaultFeatureConfig>
 						int max = Math.min(generator.getMinSize(), rad);
 						int min = Math.max(generator.getMinSize(), rad / 2);
 						rad = MHelper.getSquaredRange(min, max, random);
-						this.children.add(new IslandPiece(childPos, rad, random, generator));
+						this.children.add(new IslandPiece(childPos, rad, random, Generators.cloneGenerator(generator)));
 					}
 				}
 			}

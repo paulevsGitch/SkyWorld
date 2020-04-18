@@ -46,4 +46,9 @@ public class Generators
 	{
 		return getGenerator(GENERATOR_LIST.get(random.nextInt(GENERATOR_LIST.size())));
 	}
+	
+	public static IslandGenerator cloneGenerator(IslandGenerator generator)
+	{
+		return getGenerator(generator.getName());
+	}
 }
