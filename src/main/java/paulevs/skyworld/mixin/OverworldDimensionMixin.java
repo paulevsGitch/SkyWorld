@@ -5,21 +5,19 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.block.Blocks;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.source.BiomeSource;
-import net.minecraft.world.biome.source.VanillaLayeredBiomeSource;
 import net.minecraft.world.biome.source.VanillaLayeredBiomeSourceConfig;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.dimension.OverworldDimension;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.ChunkGeneratorConfig;
-import net.minecraft.world.gen.chunk.FloatingIslandsChunkGeneratorConfig;
 import net.minecraft.world.level.LevelGeneratorType;
-import paulevs.skyworld.SkyChunkGenerator;
 import paulevs.skyworld.SkyWorldType;
+import paulevs.skyworld.generator.SkyChunkGenerator;
+import paulevs.skyworld.generator.SkyWorldBiomeSource;
+import paulevs.skyworld.generator.SkyWorldChunkGeneratorConfig;
 
 @Mixin(OverworldDimension.class)
 public abstract class OverworldDimensionMixin extends Dimension
@@ -35,13 +33,11 @@ public abstract class OverworldDimensionMixin extends Dimension
 		LevelGeneratorType levelGeneratorType = this.world.getLevelProperties().getGeneratorType();
 		if (levelGeneratorType == SkyWorldType.SKY_WORLD)
 		{
-			//BiomeSource biomeSource = new FixedBiomeSource(new FixedBiomeSourceConfig(null).setBiome(Biomes.BAMBOO_JUNGLE));
-			BiomeSource biomeSource = new VanillaLayeredBiomeSource(new VanillaLayeredBiomeSourceConfig(this.world.getLevelProperties()));
+			SkyWorldChunkGeneratorConfig config = new SkyWorldChunkGeneratorConfig();
 			
-			FloatingIslandsChunkGeneratorConfig config = new FloatingIslandsChunkGeneratorConfig();
-			config.withCenter(new BlockPos(0, 64, 0));
-			config.setDefaultBlock(Blocks.DIAMOND_BLOCK.getDefaultState());
-			config.setDefaultFluid(Blocks.ACACIA_PLANKS.getDefaultState());
+			VanillaLayeredBiomeSourceConfig bSource = new VanillaLayeredBiomeSourceConfig(this.world.getLevelProperties());
+			bSource.setGeneratorSettings(config);
+			BiomeSource biomeSource = new SkyWorldBiomeSource(bSource);
 			
 			info.setReturnValue(SkyChunkGenerator.FLOATING_CHUNK_GEN.create(this.world, biomeSource, config));
 			info.cancel();

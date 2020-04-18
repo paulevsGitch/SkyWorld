@@ -2,6 +2,7 @@ package paulevs.skyworld;
 
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
+import paulevs.skyworld.generator.SkyChunkGenerator;
 import paulevs.skyworld.structures.StructureTypes;
 import paulevs.skyworld.structures.features.StructureFeatures;
 

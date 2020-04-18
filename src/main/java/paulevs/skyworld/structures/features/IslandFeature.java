@@ -16,7 +16,7 @@ import net.minecraft.world.gen.ChunkRandom;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.feature.DefaultFeatureConfig;
 import net.minecraft.world.gen.feature.StructureFeature;
-import paulevs.skyworld.SkyChunkGenerator;
+import paulevs.skyworld.generator.SkyChunkGenerator;
 import paulevs.skyworld.math.MHelper;
 import paulevs.skyworld.math.Vector2F;
 import paulevs.skyworld.structures.generators.Generators;

@@ -1,4 +1,4 @@
-package paulevs.skyworld;
+package paulevs.skyworld.generator;
 
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.ChunkRegion;
@@ -10,16 +10,15 @@ import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.ChunkGeneratorType;
-import net.minecraft.world.gen.chunk.FloatingIslandsChunkGeneratorConfig;
 import net.minecraft.world.gen.feature.FeatureConfig;
 import net.minecraft.world.gen.feature.StructureFeature;
 import paulevs.skyworld.structures.features.StructureFeatures;
 
-public class SkyChunkGenerator extends ChunkGenerator<FloatingIslandsChunkGeneratorConfig>
+public class SkyChunkGenerator extends ChunkGenerator<SkyWorldChunkGeneratorConfig>
 {
-	public static final ChunkGeneratorType<FloatingIslandsChunkGeneratorConfig, SkyChunkGenerator> FLOATING_CHUNK_GEN;
+	public static final ChunkGeneratorType<SkyWorldChunkGeneratorConfig, SkyChunkGenerator> FLOATING_CHUNK_GEN;
 	
-	public SkyChunkGenerator(IWorld world, BiomeSource biomeSource, FloatingIslandsChunkGeneratorConfig config)
+	public SkyChunkGenerator(IWorld world, BiomeSource biomeSource, SkyWorldChunkGeneratorConfig config)
 	{
 		super(world, biomeSource, config);
 	}
@@ -28,10 +27,10 @@ public class SkyChunkGenerator extends ChunkGenerator<FloatingIslandsChunkGenera
 	
 	static
 	{
-		FLOATING_CHUNK_GEN = new ChunkGeneratorType<FloatingIslandsChunkGeneratorConfig, SkyChunkGenerator>(null, false, FloatingIslandsChunkGeneratorConfig::new)
+		FLOATING_CHUNK_GEN = new ChunkGeneratorType<SkyWorldChunkGeneratorConfig, SkyChunkGenerator>(null, false, SkyWorldChunkGeneratorConfig::new)
 		{
 			@Override
-			public SkyChunkGenerator create(World world, BiomeSource biomeSource, FloatingIslandsChunkGeneratorConfig config)
+			public SkyChunkGenerator create(World world, BiomeSource biomeSource, SkyWorldChunkGeneratorConfig config)
 			{
 			      return new SkyChunkGenerator(world, biomeSource, config);
 			}
