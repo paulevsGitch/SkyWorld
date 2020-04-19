@@ -14,14 +14,21 @@ import net.minecraft.world.biome.Biome.Category;
 import net.minecraft.world.biome.source.BiomeLayerSampler;
 import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.biome.source.VanillaLayeredBiomeSourceConfig;
+import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.GenerationStep.Feature;
+import net.minecraft.world.gen.decorator.Decorator;
+import net.minecraft.world.gen.decorator.DecoratorConfig;
 import net.minecraft.world.gen.feature.BranchedTreeFeatureConfig;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.DecoratedFeature;
 import net.minecraft.world.gen.feature.DecoratedFeatureConfig;
+import net.minecraft.world.gen.feature.DefaultFeatureConfig;
+import net.minecraft.world.gen.feature.FeatureConfig;
 import net.minecraft.world.gen.feature.RandomFeatureConfig;
 import net.minecraft.world.gen.feature.RandomFeatureEntry;
-import paulevs.skyworld.structures.features.FoliagePair;;
+import net.minecraft.world.gen.feature.StructureFeature;
+import paulevs.skyworld.structures.features.FoliagePair;
+import paulevs.skyworld.structures.features.StructureFeatures;
 
 public class SkyWorldBiomeSource extends BiomeSource
 {
@@ -74,13 +81,16 @@ public class SkyWorldBiomeSource extends BiomeSource
 			}
 		BIOMES = ImmutableSet.copyOf(biomes);
 		
-		/*for (Biome biome: BIOMES)
+		StructureFeature<DefaultFeatureConfig> feature = StructureFeatures.SKY_ISLAND;
+		for (Biome biome: BIOMES)
 		{
-			StructureFeature<DefaultFeatureConfig> feature = StructureFeatures.SKY_ISLAND;
-			biome.addStructureFeature(feature.configure(FeatureConfig.DEFAULT));
-			biome.getFeaturesForStep(GenerationStep.Feature.RAW_GENERATION).clear();
-			biome.addFeature(GenerationStep.Feature.RAW_GENERATION, feature.configure(FeatureConfig.DEFAULT).createDecoratedFeature(Decorator.NOPE.configure(DecoratorConfig.DEFAULT)));
-		}*/
+			if (!biome.hasStructureFeature(feature))
+			{
+				biome.addStructureFeature(feature.configure(FeatureConfig.DEFAULT));
+				biome.getFeaturesForStep(GenerationStep.Feature.RAW_GENERATION).clear();
+				biome.addFeature(GenerationStep.Feature.RAW_GENERATION, feature.configure(FeatureConfig.DEFAULT).createDecoratedFeature(Decorator.NOPE.configure(DecoratorConfig.DEFAULT)));
+			}
+		}
 	}
 	
 	private static boolean isValidCategory(Category category)

@@ -1,37 +1,34 @@
-{
-  "schemaVersion": 1,
-  "id": "skyworld",
-  "version": "${version}",
+	{
+	"schemaVersion": 1,
+	"id": "skyworld",
+	"version": "${version}",
 
-  "name": "SkyWorld",
-  "description": "This is an example description! Tell everyone what your mod is about!",
-  "authors": [
-    "paulevs"
-  ],
-  "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
-  },
+	"name": "SkyWorld",
+	"description": "This mod adds new world generation type - Sky World",
+	"authors": [
+		"paulevs"
+	],
+	"contact": {
+		"homepage": "https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/minecraft-mods/wip-mods/2930448-better-nether",
+		"sources": "https://github.com/paulevsGitch/SkyWorld"
+	},
 
-  "license": "CC0-1.0",
-  "icon": "assets/skyworld/icon.png",
+	"license": "GPLv3",
+	"icon": "assets/skyworld/icon.png",
 
-  "environment": "*",
-  "entrypoints": {
-    "main": [
-      "paulevs.skyworld.SkyWorld"
-    ]
-  },
-  "mixins": [
-    "skyworld.mixins.json"
-  ],
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"paulevs.skyworld.SkyWorld"
+		]
+	},
+	"mixins": [
+		"skyworld.mixins.json"
+	],
 
-  "depends": {
-    "fabricloader": ">=0.7.4",
-    "fabric": "*",
-    "minecraft": "1.15.x"
-  },
-  "suggests": {
-    "flamingo": "*"
-  }
+	"depends": {
+		"fabricloader": ">=0.7.4",
+		"fabric": "*",
+		"minecraft": "1.15.x"
+	}
 }
