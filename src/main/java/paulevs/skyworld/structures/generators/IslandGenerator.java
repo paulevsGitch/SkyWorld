@@ -1,17 +1,17 @@
 package paulevs.skyworld.structures.generators;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.VineBlock;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.Mutable;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStep.Feature;
@@ -20,19 +20,22 @@ import net.minecraft.world.gen.decorator.ConfiguredDecorator;
 import net.minecraft.world.gen.decorator.CountDepthDecoratorConfig;
 import net.minecraft.world.gen.decorator.DecoratorConfig;
 import net.minecraft.world.gen.decorator.RangeDecoratorConfig;
-import net.minecraft.world.gen.feature.BranchedTreeFeatureConfig;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.DecoratedFeature;
 import net.minecraft.world.gen.feature.DecoratedFeatureConfig;
 import net.minecraft.world.gen.feature.OreFeatureConfig;
 import net.minecraft.world.gen.feature.OreFeatureConfig.Target;
-import net.minecraft.world.gen.feature.RandomFeatureConfig;
-import net.minecraft.world.gen.feature.RandomFeatureEntry;
+import paulevs.skyworld.generator.SkyWorldBiomeSource;
 import paulevs.skyworld.math.MHelper;
 import paulevs.skyworld.structures.features.FoliagePair;
 
 public abstract class IslandGenerator
 {
+	private static final Vec3i[] OFFSETS = new Vec3i[] {
+			new Vec3i(-1, 0, -1), new Vec3i(-1, 0, 0), new Vec3i(-1, 0, 1),
+			new Vec3i( 0, 0, -1), new Vec3i( 0, 0, 1),
+			new Vec3i( 1, 0, -1), new Vec3i( 1, 0, 0), new Vec3i( 1, 0, 1)
+	};
+
 	protected static final BlockState STONE = Blocks.STONE.getDefaultState();
 	protected static final Mutable B_POS = new Mutable();
 	protected static final VolumetricHeightmap HEIGHTMAP = new VolumetricHeightmap();
@@ -60,33 +63,196 @@ public abstract class IslandGenerator
 		return this;
 	}
 	
-	protected void generateBushes(BlockBox box, IWorld world, Random random)
+	protected void generateBushes(BlockBox box, IWorld world, Random random, int radius)
 	{
 		B_POS.set(box.minX + 8, 0, box.minZ + 8);
-		Set<FoliagePair> pairs = getFoliage(world.getBiome(B_POS));
-		if (!pairs.isEmpty())
+		Biome biome = world.getBiome(B_POS);
+		FoliagePair[] pairs = SkyWorldBiomeSource.getFoliage(biome);
+		if (pairs != null && pairs.length > 0)
 		{
-			FoliagePair[] pairArr = pairs.toArray(new FoliagePair[] {});
+			int count = radius > 20 ? 4 : (int) Math.ceil(radius / 5F);
+			int countBush = MHelper.randRange(count / 2, count, random);
+			int countVine = MHelper.randRange(count / 2, count, random);
 			int sectionStart = VolumetricHeightmap.getSection(box.minY);
 			int sectionEnd = VolumetricHeightmap.getSection(box.maxY);
 			for (int section = sectionStart; section <= sectionEnd; section++)
 			{
-				for (int i = 0; i < 4; i++)
+				if (biome.getRainfall() > 0.5F)
 				{
-					B_POS.setX(MHelper.randRange(box.minX, box.maxX, random));
-					B_POS.setZ(MHelper.randRange(box.minZ, box.maxZ, random));
-					int hx = B_POS.getX() - box.minX;
-					int hz = B_POS.getZ() - box.minZ;
-					int h = HEIGHTMAP.getRandomHeight(hx, hz, section, random);
-					if (h > 0)
+					for (int i = 0; i < countBush; i++)
 					{
-						B_POS.setY(h + 1);
-						FoliagePair pair = pairArr[random.nextInt(pairArr.length)];
-						makeBush(world, B_POS.toImmutable(), pair, random);
+						B_POS.setX(MHelper.randRange(box.minX, box.maxX, random));
+						B_POS.setZ(MHelper.randRange(box.minZ, box.maxZ, random));
+						int hx = B_POS.getX() - box.minX;
+						int hz = B_POS.getZ() - box.minZ;
+						int h = HEIGHTMAP.getRandomHeight(hx, hz, section, random);
+						if (h > 0)
+						{
+							B_POS.setY(h + 1);
+							FoliagePair pair = pairs[random.nextInt(pairs.length)];
+							makeBush(world, B_POS.toImmutable(), pair, random);
+						}
+					}
+				}
+				
+				if (hasVines(biome))
+				{
+					for (int i = 0; i < countVine; i++)
+					{
+						B_POS.setX(MHelper.randRange(box.minX, box.maxX, random));
+						B_POS.setZ(MHelper.randRange(box.minZ, box.maxZ, random));
+						int hx = B_POS.getX() - box.minX;
+						int hz = B_POS.getZ() - box.minZ;
+						int h = HEIGHTMAP.getRandomHeight(hx, hz, section, random);
+						if (h > 0)
+						{
+							B_POS.setY(h + 1);
+							FoliagePair pair = pairs[random.nextInt(pairs.length)];
+							generateVine(world, pair, box, B_POS, random, radius);
+						}
 					}
 				}
 			}
+			
+			if (hasVines(biome))
+			{
+				for (int i = 0; i < countVine * 2; i++)
+				{
+					B_POS.setX(MHelper.randRange(box.minX, box.maxX, random));
+					B_POS.setZ(MHelper.randRange(box.minZ, box.maxZ, random));
+					B_POS.setY(box.minY);
+					while (world.isAir(B_POS) && B_POS.getY() < box.maxY)
+					{
+						B_POS.setY(B_POS.getY() + 1);
+					}
+					if (B_POS.getY() >= box.maxY - 1)
+						continue;
+					if (!world.isAir(B_POS))
+						continue;
+					else
+					{
+						B_POS.setY(B_POS.getY() - 1);
+					}
+					FoliagePair pair = pairs[random.nextInt(pairs.length)];
+					generateVine(world, pair, box, B_POS, random, radius / 2);
+				}
+				
+				for (int i = 0; i < countVine * 3; i++)
+				{
+					B_POS.setX(MHelper.randRange(box.minX, box.maxX, random));
+					B_POS.setZ(MHelper.randRange(box.minZ, box.maxZ, random));
+					B_POS.setY(box.minY);
+					boolean sides = false;
+					while (world.isAir(B_POS) && B_POS.getY() < box.maxY && !sides)
+					{
+						B_POS.setY(B_POS.getY() + 1);
+						sides = hasSideBlocks(world, B_POS);
+					}
+					if (B_POS.getY() >= box.maxY - 1 || !world.isAir(B_POS) || !sides)
+						continue;
+					generateVanillaVine(world, B_POS, random, radius * 3 / 2);
+				}
+			}
 		}
+	}
+	
+	private boolean hasVines(Biome biome)
+	{
+		float t = biome.getTemperature();
+		return t >= 0.5F && t <= 1.5F && biome.getRainfall() > 0.5F;
+	}
+	
+	protected void generateVine(IWorld world, FoliagePair pair, BlockBox box, BlockPos pos, Random random, int maxLength)
+	{
+		int x = pos.getX();
+		int y = pos.getY();
+		int z = pos.getZ();
+		B_POS.set(pos);
+		int length = MHelper.randRange(maxLength > 5 ? 5 : 0, maxLength, random);
+		int length2 = length / 2;
+		boolean offseted = false;
+		for (int i = 0; i < length; i++)
+		{
+			if (i < length2)
+			{
+				Vec3i offset = OFFSETS[random.nextInt(OFFSETS.length)];
+				B_POS.setX(x + offset.getX());
+				B_POS.setZ(z + offset.getZ());
+				if (world.isAir(B_POS))
+					pair.setLeavesNoDecay(world, B_POS, random);
+				B_POS.setX(x);
+				B_POS.setZ(z);
+			}
+			B_POS.setY(y--);
+			if (world.isAir(B_POS))
+			{
+				if (!offseted && random.nextBoolean())
+				{
+					Vec3i offset = OFFSETS[random.nextInt(OFFSETS.length)];
+					B_POS.setX(x + offset.getX());
+					B_POS.setZ(z + offset.getZ());
+					if (!world.isAir(B_POS))
+					{
+						B_POS.setX(x);
+						B_POS.setZ(z);
+					}
+					pair.setLeavesNoDecay(world, B_POS, random);
+					B_POS.setX(x);
+					B_POS.setZ(z);
+					offseted = true;
+				}
+				else
+				{
+					offseted = false;
+					pair.setLeavesNoDecay(world, B_POS, random);
+				}
+				continue;
+			}
+			for (Vec3i dir: OFFSETS)
+			{
+				B_POS.setX(x + dir.getX());
+				B_POS.setZ(z + dir.getZ());
+				if (!box.contains(B_POS))
+					continue;
+				if (world.isAir(B_POS))
+				{
+					pair.setLeavesNoDecay(world, B_POS, random);
+					x = pos.getX();
+					z = pos.getZ();
+					break;
+				}
+			}
+		}
+	}
+	
+	protected void generateVanillaVine(IWorld world, BlockPos pos, Random random, int maxLength)
+	{
+		boolean north = !isAir(world, pos.north());
+		boolean south = !isAir(world, pos.south());
+		boolean east = !isAir(world, pos.east());
+		boolean west = !isAir(world, pos.west());
+		//if (north || south || east || west)
+		{
+			BlockState vine = Blocks.VINE.getDefaultState()
+					.with(VineBlock.NORTH, north)
+					.with(VineBlock.SOUTH, south)
+					.with(VineBlock.EAST, east)
+					.with(VineBlock.WEST, west);
+			int length = MHelper.randRange(maxLength > 5 ? 5 : 0, maxLength, random);
+			B_POS.set(pos);
+			int y = pos.getY();
+			for (int i = 0; i < length; i++)
+			{
+				B_POS.setY(y - i);
+				if (world.isAir(B_POS))
+					world.setBlockState(B_POS, vine, 0);
+			}
+		}
+	}
+	
+	protected boolean hasSideBlocks(IWorld world, BlockPos pos)
+	{
+		return !isAir(world, pos.north()) || !isAir(world, pos.south()) || !isAir(world, pos.east()) || !isAir(world, pos.west());
 	}
 	
 	protected void generateOres(BlockBox box, IWorld world, Random random, int radius)
@@ -143,32 +309,6 @@ public abstract class IslandGenerator
 				}
 			}
 		}
-	}
-	
-	protected Set<FoliagePair> getFoliage(Biome biome)
-	{
-		Set<FoliagePair> pairs = new HashSet<FoliagePair>();
-		List<ConfiguredFeature<?,?>> vegetation = biome.getFeaturesForStep(Feature.VEGETAL_DECORATION);
-		for (ConfiguredFeature<?,?> feature: vegetation)
-		{
-			if (feature.feature instanceof DecoratedFeature)
-			{
-				DecoratedFeatureConfig dConfig = (DecoratedFeatureConfig) feature.config;
-				if (dConfig.feature.config instanceof RandomFeatureConfig)
-				{
-					RandomFeatureConfig rfConfig = (RandomFeatureConfig) dConfig.feature.config;
-					for (RandomFeatureEntry<?> rFeature: rfConfig.features)
-					{
-						if (rFeature.feature.config instanceof BranchedTreeFeatureConfig)
-						{
-							BranchedTreeFeatureConfig config = (BranchedTreeFeatureConfig) rFeature.feature.config;
-							pairs.add(new FoliagePair(config.trunkProvider, config.leavesProvider));
-						}
-					}
-				}
-			}
-		}
-		return pairs;
 	}
 	
 	protected void makeBush(IWorld world, BlockPos pos, FoliagePair foliage, Random random)

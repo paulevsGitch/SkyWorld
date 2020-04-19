@@ -12,6 +12,7 @@ import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import paulevs.skyworld.SkyWorldType;
 
 @Mixin(WorldRenderer.class)
 public class WorldRenderMixin
@@ -25,8 +26,11 @@ public class WorldRenderMixin
 	@Inject(method = "renderClouds(Lnet/minecraft/client/render/BufferBuilder;DDDLnet/minecraft/util/math/Vec3d;)V", at = @At("RETURN"))
 	private void clouds(BufferBuilder builder, double x, double y, double z, Vec3d color, CallbackInfo info)
 	{
-		renderCloudsBuf(builder, x, y - 16, z, color, 5, 7);
-		renderCloudsBuf(builder, x, y + 16, z, color, -6, -4);
+		if (world.getGeneratorType() == SkyWorldType.SKY_WORLD)
+		{
+			renderCloudsBuf(builder, x, y - 16, z, color, 5, 7);
+			renderCloudsBuf(builder, x, y + 16, z, color, -6, -4);
+		}
 	}
 	
 	private void renderCloudsBuf(BufferBuilder builder, double x, double y, double z, Vec3d color, int offsetX, int offsetY)

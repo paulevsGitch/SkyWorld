@@ -72,7 +72,7 @@ public class IslandTallSphereGenerator extends IslandGenerator
 			}
 		}
 		generateOres(box, world, random, radius);
-		generateBushes(box, world, random);
+		generateBushes(box, world, random, radius);
 	}
 	
 	@Override
