@@ -28,6 +28,8 @@ public class IslandConeGenerator extends IslandGenerator
 	{
 		this.h1 = (int) Math.ceil(radius * 0.125F);
 		this.h2 = radius - h1;
+		if (this.h2 > 64)
+			this.h2 = 64;
 		this.cone1Pos = center.down(h1);
 		this.cone2Pos = center.down(h1 + h2);
 		this.r2 = radius * 0.5F;
@@ -35,6 +37,8 @@ public class IslandConeGenerator extends IslandGenerator
 		this.blend = radius * 0.5F;
 		this.noisePower = radius * 0.15F;
 		this.noiseScale = 0.5F / (float) Math.log(radius);
+		if (radius > 64)
+			this.noiseScale *= 0.3F;
 	}
 
 	@Override

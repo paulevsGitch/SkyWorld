@@ -73,6 +73,14 @@ public class SkyWorldBiomeSource extends BiomeSource
 				FOLIAGE.put(biome, biomeFlora.toArray(new FoliagePair[] {}));
 			}
 		BIOMES = ImmutableSet.copyOf(biomes);
+		
+		/*for (Biome biome: BIOMES)
+		{
+			StructureFeature<DefaultFeatureConfig> feature = StructureFeatures.SKY_ISLAND;
+			biome.addStructureFeature(feature.configure(FeatureConfig.DEFAULT));
+			biome.getFeaturesForStep(GenerationStep.Feature.RAW_GENERATION).clear();
+			biome.addFeature(GenerationStep.Feature.RAW_GENERATION, feature.configure(FeatureConfig.DEFAULT).createDecoratedFeature(Decorator.NOPE.configure(DecoratorConfig.DEFAULT)));
+		}*/
 	}
 	
 	private static boolean isValidCategory(Category category)

@@ -39,12 +39,18 @@ public class SkyChunkGenerator extends ChunkGenerator<SkyWorldChunkGeneratorConf
 	}
 
 	@Override
-	public void buildSurface(ChunkRegion chunkRegion, Chunk chunk) {}
+	public void buildSurface(ChunkRegion chunkRegion, Chunk chunk)
+	{
+		/*long[] heightmap = new long[256];
+		for (int i = 0; i < 256; i++)
+			heightmap[i] = 64;
+		chunk.setHeightmap(Heightmap.Type.WORLD_SURFACE_WG, heightmap);*/
+	}
 
 	@Override
 	public int getSpawnHeight()
 	{
-		return 64;
+		return 0;
 	}
 
 	@Override
@@ -66,6 +72,6 @@ public class SkyChunkGenerator extends ChunkGenerator<SkyWorldChunkGeneratorConf
 	public boolean hasStructure(Biome biome, StructureFeature<? extends FeatureConfig> structureFeature)
 	{
 		//System.out.println(structureFeature.getName());
-		return StructureFeatures.hasFeature(structureFeature);// || super.hasStructure(biome, structureFeature);
+		return structureFeature == StructureFeatures.SKY_ISLAND;// || structureFeature == Feature.VILLAGE;// StructureFeatures.hasFeature(structureFeature);// || super.hasStructure(biome, structureFeature);
 	}
 }

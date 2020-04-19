@@ -60,7 +60,9 @@ public class IslandFeature extends StructureFeature<DefaultFeatureConfig>
 		if (chunkGenerator instanceof SkyChunkGenerator)
 		{
 			ChunkPos pos = getStart(chunkGenerator, random, chunkX, chunkZ, 0, 0);
-			return chunkX == pos.x && chunkZ == pos.z;
+			if (chunkX == pos.x && chunkZ == pos.z)
+				return true;
+			//return Feature.VILLAGE.shouldStartAt(biomeAccess, chunkGenerator, random, chunkX, chunkZ, biome);
 		}
 		return false;
 	}
@@ -108,11 +110,16 @@ public class IslandFeature extends StructureFeature<DefaultFeatureConfig>
 		@Override
 		public void initialize(ChunkGenerator<?> chunkGenerator, StructureManager structureManager, int x, int z, Biome biome)
 		{
+			//boolean village = Feature.VILLAGE.shouldStartAt(null, chunkGenerator, random, x, z, biome);
 			int px = (x << 4);
 			int pz = (z << 4);
-			IslandGenerator generator = Generators.getGenerator(random);
-			int radius = MHelper.getSquaredRange(generator.getMinSize(), generator.getMaxSize(), random);
-			BlockPos center = new BlockPos(px + random.nextInt(16), MHelper.randRange(radius + 16, 128, random), pz + random.nextInt(16));
+			IslandGenerator generator = /*village ? Generators.getGenerator("cone") : */Generators.getGenerator(random);
+			int radius = /*village ? 128 : */MHelper.getSquaredRange(generator.getMinSize(), generator.getMaxSize(), random);
+			BlockPos center = new BlockPos(
+				px + random.nextInt(16),
+				/*village ? MHelper.randRange(64, 128, random) : */MHelper.randRange(radius + 16, 128, random),
+				pz + random.nextInt(16)
+			);
 			this.children.add(new IslandPiece(center, radius, random, generator));
 			if (radius > 30 && random.nextBoolean()) // archipelago
 			{

@@ -27,8 +27,9 @@ public class StructureFeatures
 		FEATURES.add(feature);
 		Feature.STRUCTURES.put(id, feature);
 		Registry.BIOME.forEach((biome) -> {
+			biome.getFeaturesForStep(GenerationStep.Feature.RAW_GENERATION).add(0, feature.configure(FeatureConfig.DEFAULT).createDecoratedFeature(Decorator.NOPE.configure(DecoratorConfig.DEFAULT)));
 			biome.addStructureFeature(feature.configure(FeatureConfig.DEFAULT));
-			biome.addFeature(GenerationStep.Feature.RAW_GENERATION, feature.configure(FeatureConfig.DEFAULT).createDecoratedFeature(Decorator.NOPE.configure(DecoratorConfig.DEFAULT)));
+			//biome.addFeature(GenerationStep.Feature.RAW_GENERATION, feature.configure(FeatureConfig.DEFAULT).createDecoratedFeature(Decorator.NOPE.configure(DecoratorConfig.DEFAULT)));
 		});
 		return Registry.register(Registry.STRUCTURE_FEATURE, SkyWorld.getID(id), feature);
 	}

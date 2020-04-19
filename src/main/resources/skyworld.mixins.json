@@ -4,7 +4,8 @@
   "package": "paulevs.skyworld.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-	"OverworldDimensionMixin"
+	"OverworldDimensionMixin",
+	"VillageFeatureMixin"
   ],
   "client": [
 	"DimensionRenderMixin",
