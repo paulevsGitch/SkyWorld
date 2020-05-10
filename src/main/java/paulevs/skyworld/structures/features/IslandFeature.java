@@ -17,6 +17,7 @@ import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.feature.DefaultFeatureConfig;
 import net.minecraft.world.gen.feature.StructureFeature;
 import paulevs.skyworld.generator.SkyChunkGenerator;
+import paulevs.skyworld.generator.SkyWorldChunkGeneratorConfig;
 import paulevs.skyworld.math.MHelper;
 import paulevs.skyworld.math.Vector2F;
 import paulevs.skyworld.structures.generators.Generators;
@@ -33,13 +34,14 @@ public class IslandFeature extends StructureFeature<DefaultFeatureConfig>
 	{
 		super(configFactory);
 		salt = getName().hashCode();
-		distance = 6;
-		separation = 3;
 	}
 
 	@Override
 	protected ChunkPos getStart(ChunkGenerator<?> chunkGenerator, Random random, int chunkX, int chunkZ, int scaleX, int scaleZ)
 	{
+		SkyWorldChunkGeneratorConfig config = (SkyWorldChunkGeneratorConfig) chunkGenerator.getConfig();
+		distance = config.getIslandDistance();
+		separation = distance / 2;
 		int o = chunkX + distance * scaleX;
 		int p = chunkZ + distance * scaleZ;
 		int q = o < 0 ? o - distance + 1 : o;

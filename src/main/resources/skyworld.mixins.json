@@ -10,7 +10,8 @@
   "client": [
 	"DimensionRenderMixin",
 	"WorldRenderMixin",
-	"ClientWorldMixin"
+	"ClientWorldMixin",
+	"CreateWorldScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

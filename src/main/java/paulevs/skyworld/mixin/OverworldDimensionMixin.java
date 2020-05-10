@@ -5,6 +5,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import com.mojang.datafixers.Dynamic;
+
+import net.minecraft.datafixer.NbtOps;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.biome.source.VanillaLayeredBiomeSourceConfig;
@@ -27,13 +30,15 @@ public abstract class OverworldDimensionMixin extends Dimension
 		super(world, type, f);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Inject(method = "createChunkGenerator", at = @At("HEAD"), cancellable = true)
 	private void makeChunkGenerator(CallbackInfoReturnable<ChunkGenerator<? extends ChunkGeneratorConfig>> info)
 	{
 		LevelGeneratorType levelGeneratorType = this.world.getLevelProperties().getGeneratorType();
 		if (levelGeneratorType == SkyWorldType.SKY_WORLD)
 		{
-			SkyWorldChunkGeneratorConfig config = new SkyWorldChunkGeneratorConfig();
+			@SuppressWarnings("rawtypes")
+			SkyWorldChunkGeneratorConfig config = SkyWorldChunkGeneratorConfig.fromDynamic(new Dynamic(NbtOps.INSTANCE, this.world.getLevelProperties().getGeneratorOptions()));;//new SkyWorldChunkGeneratorConfig();
 			
 			VanillaLayeredBiomeSourceConfig bSource = new VanillaLayeredBiomeSourceConfig(this.world.getLevelProperties());
 			bSource.setGeneratorSettings(config);

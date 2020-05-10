@@ -1,3 +1,6 @@
 {
-	"generator.sky_world": "Sky World"
+	"generator.sky_world": "Sky World",
+	"createWorld.customize.skyworld.islanddistance": "Distance Between Islands",
+	"createWorld.customize.skyworld.inchunks": "ch",
+	"createWorld.customize.skyworld.inblocks": "bl"
 }

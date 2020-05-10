@@ -1,3 +1,6 @@
 {
-	"generator.sky_world": "Небесный мир"
+	"generator.sky_world": "Небесный мир",
+	"createWorld.customize.skyworld.islanddistance": "Расстояние между островами",
+	"createWorld.customize.skyworld.inchunks": "ч",
+	"createWorld.customize.skyworld.inblocks": "б"
 }
