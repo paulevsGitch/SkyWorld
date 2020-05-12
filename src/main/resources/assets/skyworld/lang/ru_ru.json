@@ -6,7 +6,7 @@
 	"createWorld.customize.skyworld.inblocks": "б",
 	"createWorld.customize.skyworld.biomesize": "Размер биомов [число итераций]",
 	"options.skyworld.hasleafvines": "Генерировать лозы из листьев",
-	"options.skyworld.hasnormalvines": "Генерировать стандартные лоз",
+	"options.skyworld.hasnormalvines": "Генерировать стандартные лозы",
 	"options.skyworld.hasbushes": "Генерировать кусты",
 	"options.skyworld.hasocean": "Генерировать океан",
 	"options.skyworld.type.flat_sphere": "Остров - уплощённая сфера",
