@@ -8,6 +8,7 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.surfacebuilder.SurfaceConfig;
+import paulevs.skyworld.generator.SkyWorldChunkGeneratorConfig;
 import paulevs.skyworld.math.MHelper;
 import paulevs.skyworld.math.SDF;
 
@@ -72,6 +73,6 @@ public class IslandFlatSphereGenerator extends IslandGenerator
 			}
 		}
 		generateOres(box, world, random, radius);
-		generateBushes(box, world, random, radius);
+		generateFoliage(box, world, random, radius, (SkyWorldChunkGeneratorConfig) generator.getConfig());
 	}
 }

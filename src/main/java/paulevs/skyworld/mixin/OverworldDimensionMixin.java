@@ -42,7 +42,7 @@ public abstract class OverworldDimensionMixin extends Dimension
 			
 			VanillaLayeredBiomeSourceConfig bSource = new VanillaLayeredBiomeSourceConfig(this.world.getLevelProperties());
 			bSource.setGeneratorSettings(config);
-			BiomeSource biomeSource = new SkyWorldBiomeSource(bSource);
+			BiomeSource biomeSource = new SkyWorldBiomeSource(bSource, config.hasOcean());
 			
 			info.setReturnValue(SkyChunkGenerator.FLOATING_CHUNK_GEN.create(this.world, biomeSource, config));
 			info.cancel();

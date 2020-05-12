@@ -1,5 +1,8 @@
 package paulevs.skyworld.generator;
 
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.util.math.BlockPos.Mutable;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.Heightmap.Type;
@@ -10,17 +13,29 @@ import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.ChunkGeneratorType;
+import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.FeatureConfig;
 import net.minecraft.world.gen.feature.StructureFeature;
+import net.minecraft.world.gen.surfacebuilder.SurfaceConfig;
+import paulevs.skyworld.noise.OpenSimplexNoise;
 import paulevs.skyworld.structures.features.StructureFeatures;
 
 public class SkyChunkGenerator extends ChunkGenerator<SkyWorldChunkGeneratorConfig>
 {
 	public static final ChunkGeneratorType<SkyWorldChunkGeneratorConfig, SkyChunkGenerator> FLOATING_CHUNK_GEN;
+	private static final int[][] HEIGHTMAP = new int[16][16];
+	private static final Mutable POS = new Mutable();
+	private static final BlockState BEDROCK = Blocks.BEDROCK.getDefaultState();
+	private static final BlockState STONE = Blocks.STONE.getDefaultState();
+	private static final BlockState WATER = Blocks.WATER.getDefaultState();
+	private OpenSimplexNoise oceanFloorNoise;
+	private boolean hasOcean = false;
 	
 	public SkyChunkGenerator(IWorld world, BiomeSource biomeSource, SkyWorldChunkGeneratorConfig config)
 	{
 		super(world, biomeSource, config);
+		this.oceanFloorNoise = new OpenSimplexNoise(world.getSeed());
+		this.hasOcean = config.hasOcean();
 	}
 	
 	public static void register() {}
@@ -41,10 +56,40 @@ public class SkyChunkGenerator extends ChunkGenerator<SkyWorldChunkGeneratorConf
 	@Override
 	public void buildSurface(ChunkRegion chunkRegion, Chunk chunk)
 	{
-		/*long[] heightmap = new long[256];
-		for (int i = 0; i < 256; i++)
-			heightmap[i] = 64;
-		chunk.setHeightmap(Heightmap.Type.WORLD_SURFACE_WG, heightmap);*/
+		if (hasOcean)
+		{
+			for (int x = 0; x < 16; x++)
+			{
+				POS.setX(x);
+				double nx = ((chunk.getPos().x << 4) | x) * 0.02;
+				for (int z = 0; z < 16; z++)
+				{
+					POS.setZ(z);
+					double nz = ((chunk.getPos().z << 4) | z) * 0.02;
+					double h = oceanFloorNoise.eval(nx, nz) * 0.75 + oceanFloorNoise.eval(nx * 3, nz * 3) * 0.1875 + oceanFloorNoise.eval(nx * 9, nz * 9) * 0.0625;
+					h = h * 3.5 + 5.7;
+					int hsurf = (int) (h - 1);
+					for (int y = 0; y < h; y++)
+					{
+						POS.setY(y);
+						if (y == hsurf)
+						{
+							SurfaceConfig config = chunkRegion.getBiome(POS).getSurfaceConfig();
+							chunk.setBlockState(POS, config.getUnderMaterial(), false);
+						}
+						else if (y < 1 || (y < 2 && chunkRegion.getRandom().nextBoolean()))
+							chunk.setBlockState(POS, BEDROCK, false);
+						else
+							chunk.setBlockState(POS, STONE, false);
+					}
+					for (int y = (int) h; y < 10; y++)
+					{
+						POS.setY(y);
+						chunk.setBlockState(POS, WATER, false);
+					}
+				}
+			}
+		}
 	}
 
 	@Override
@@ -59,7 +104,8 @@ public class SkyChunkGenerator extends ChunkGenerator<SkyWorldChunkGeneratorConf
 	@Override
 	public int getHeightOnGround(int x, int z, Type heightmapType)
 	{
-		return 0;
+		System.out.println(HEIGHTMAP[x & 15][z & 15]);
+		return HEIGHTMAP[x & 15][z & 15];
 	}
 	
 	@Override
@@ -71,7 +117,19 @@ public class SkyChunkGenerator extends ChunkGenerator<SkyWorldChunkGeneratorConf
 	@Override
 	public boolean hasStructure(Biome biome, StructureFeature<? extends FeatureConfig> structureFeature)
 	{
-		//System.out.println(structureFeature.getName());
-		return structureFeature == StructureFeatures.SKY_ISLAND;// || structureFeature == Feature.VILLAGE;// StructureFeatures.hasFeature(structureFeature);// || super.hasStructure(biome, structureFeature);
+		return structureFeature == StructureFeatures.SKY_ISLAND || (structureFeature == Feature.VILLAGE && super.hasStructure(biome, structureFeature));// StructureFeatures.hasFeature(structureFeature);// || super.hasStructure(biome, structureFeature);
+	}
+	
+	public static void setHeight(int x, int z, int h)
+	{
+		if (h > HEIGHTMAP[x][z])
+			HEIGHTMAP[x][z] = h;
+	}
+	
+	public static void resetHeightmap()
+	{
+		for (int x = 0; x < 16; x++)
+			for (int z = 0; z < 16; z++)
+				HEIGHTMAP[x][z] = 0;
 	}
 }

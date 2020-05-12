@@ -5,7 +5,10 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
 	"OverworldDimensionMixin",
-	"VillageFeatureMixin"
+	"VillageFeatureMixin",
+	"BiomeArrayMixin",
+	"WorldMixin",
+	"ChunkPopulateMixin"
   ],
   "client": [
 	"DimensionRenderMixin",

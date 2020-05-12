@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 public class Generators
 {
@@ -46,9 +47,13 @@ public class Generators
 	{
 		return getGenerator(GENERATOR_LIST.get(random.nextInt(GENERATOR_LIST.size())));
 	}
-	
 	public static IslandGenerator cloneGenerator(IslandGenerator generator)
 	{
 		return getGenerator(generator.getName());
+	}
+	
+	public static Set<String> getGenerators()
+	{
+		return GENERATORS.keySet();
 	}
 }

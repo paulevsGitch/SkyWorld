@@ -33,19 +33,23 @@ import paulevs.skyworld.structures.features.StructureFeatures;
 public class SkyWorldBiomeSource extends BiomeSource
 {
 	private final BiomeLayerSampler biomeSampler;
+	private final BiomeLayerSampler oceanSampler;
 	private static final Set<Biome> BIOMES;
 	private static final Map<Biome, FoliagePair[]> FOLIAGE;
+	private final boolean hasOceans;
 	
-	public SkyWorldBiomeSource(VanillaLayeredBiomeSourceConfig config)
+	public SkyWorldBiomeSource(VanillaLayeredBiomeSourceConfig config, boolean hasOceans)
 	{
 		super(BIOMES);
+		this.hasOceans = hasOceans;
 		this.biomeSampler = SkyBiomeLayer.build(config.getSeed(), config.getGeneratorType(), config.getGeneratorSettings());
+		this.oceanSampler = hasOceans ? SkyOceanLayer.build(config.getSeed(), config.getGeneratorType(), config.getGeneratorSettings()) : null;
 	}
 
 	@Override
 	public Biome getBiomeForNoiseGen(int biomeX, int biomeY, int biomeZ)
 	{
-		return this.biomeSampler.sample(biomeX, biomeZ);
+		return (hasOceans && biomeY < 4) ? this.oceanSampler.sample(biomeX, biomeZ) : this.biomeSampler.sample(biomeX, biomeZ);
 	}
 	
 	static
@@ -105,5 +109,10 @@ public class SkyWorldBiomeSource extends BiomeSource
 	public static FoliagePair[] getFoliage(Biome biome)
 	{
 		return FOLIAGE.get(biome);
+	}
+	
+	public static boolean isSurfaceBIome(Biome biome)
+	{
+		return BIOMES.contains(biome);
 	}
 }

@@ -1,6 +1,17 @@
 {
 	"generator.sky_world": "Sky World",
+	"createWorld.customize.skyworld.islands": "Island Types",
 	"createWorld.customize.skyworld.islanddistance": "Distance Between Islands",
 	"createWorld.customize.skyworld.inchunks": "ch",
-	"createWorld.customize.skyworld.inblocks": "bl"
+	"createWorld.customize.skyworld.inblocks": "bl",
+	"createWorld.customize.skyworld.biomesize": "Biome Size [iterations]",
+	"options.skyworld.hasleafvines": "Generate Vines From Leaves",
+	"options.skyworld.hasnormalvines": "Generate Default Vines",
+	"options.skyworld.hasbushes": "Generate Bushes",
+	"options.skyworld.hasocean": "Generate Ocean",
+	"options.skyworld.type.flat_sphere": "Flat Sphere Island",
+	"options.skyworld.type.cone": "Inverted Cone Island",
+	"options.skyworld.type.sphere": "Spherical Bold Island",
+	"options.skyworld.type.double_cone": "Double Cone Island",
+	"options.skyworld.type.tall_sphere": "Tall Island"
 }

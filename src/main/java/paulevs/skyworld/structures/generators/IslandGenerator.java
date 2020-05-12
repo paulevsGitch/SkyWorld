@@ -25,6 +25,7 @@ import net.minecraft.world.gen.feature.DecoratedFeatureConfig;
 import net.minecraft.world.gen.feature.OreFeatureConfig;
 import net.minecraft.world.gen.feature.OreFeatureConfig.Target;
 import paulevs.skyworld.generator.SkyWorldBiomeSource;
+import paulevs.skyworld.generator.SkyWorldChunkGeneratorConfig;
 import paulevs.skyworld.math.MHelper;
 import paulevs.skyworld.structures.features.FoliagePair;
 
@@ -63,8 +64,15 @@ public abstract class IslandGenerator
 		return this;
 	}
 	
-	protected void generateBushes(BlockBox box, IWorld world, Random random, int radius)
+	protected void generateFoliage(BlockBox box, IWorld world, Random random, int radius, SkyWorldChunkGeneratorConfig config)
 	{
+		boolean leafVines = config.hasLeafVines();
+		boolean normalVines = config.hasNormalVines();
+		boolean bushes = config.hasBushes();
+		
+		if (!leafVines && !normalVines && !bushes)
+			return;
+		
 		B_POS.set(box.minX + 8, 0, box.minZ + 8);
 		Biome biome = world.getBiome(B_POS);
 		FoliagePair[] pairs = SkyWorldBiomeSource.getFoliage(biome);
@@ -77,7 +85,7 @@ public abstract class IslandGenerator
 			int sectionEnd = VolumetricHeightmap.getSection(box.maxY);
 			for (int section = sectionStart; section <= sectionEnd; section++)
 			{
-				if (biome.getRainfall() > 0.5F)
+				if (bushes && biome.getRainfall() > 0.5F)
 				{
 					for (int i = 0; i < countBush; i++)
 					{
@@ -95,7 +103,7 @@ public abstract class IslandGenerator
 					}
 				}
 				
-				if (hasVines(biome))
+				if (leafVines && hasVines(biome))
 				{
 					for (int i = 0; i < countVine; i++)
 					{
@@ -114,7 +122,7 @@ public abstract class IslandGenerator
 				}
 			}
 			
-			if (hasVines(biome))
+			if (normalVines && hasVines(biome))
 			{
 				for (int i = 0; i < countVine * 2; i++)
 				{

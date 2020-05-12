@@ -13,9 +13,9 @@ import net.minecraft.client.resource.language.I18n;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.text.Text;
 import net.minecraft.world.level.LevelGeneratorType;
-import paulevs.skyworld.CustomizeSkyWorldScreen;
 import paulevs.skyworld.SkyWorld;
 import paulevs.skyworld.SkyWorldType;
+import paulevs.skyworld.gui.CustomizeSkyWorldScreen;
 
 @Mixin(CreateWorldScreen.class)
 public abstract class CreateWorldScreenMixin extends Screen

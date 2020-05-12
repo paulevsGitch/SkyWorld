@@ -6,7 +6,7 @@ import net.minecraft.world.level.LevelGeneratorType;
 
 public class SkyWorldType
 {
-	public static final LevelGeneratorType SKY_WORLD = makeInstance(9, "sky_world");//.setCustomizable(true);
+	public static final LevelGeneratorType SKY_WORLD = makeInstance(9, "sky_world");
 	
 	private static LevelGeneratorType makeInstance(int id, String name)
 	{

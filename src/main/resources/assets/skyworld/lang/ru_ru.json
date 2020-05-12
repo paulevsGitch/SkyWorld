@@ -1,6 +1,17 @@
 {
 	"generator.sky_world": "Небесный мир",
+	"createWorld.customize.skyworld.islands": "Типы островов",
 	"createWorld.customize.skyworld.islanddistance": "Расстояние между островами",
 	"createWorld.customize.skyworld.inchunks": "ч",
-	"createWorld.customize.skyworld.inblocks": "б"
+	"createWorld.customize.skyworld.inblocks": "б",
+	"createWorld.customize.skyworld.biomesize": "Размер биомов [число итераций]",
+	"options.skyworld.hasleafvines": "Генерировать лозы из листьев",
+	"options.skyworld.hasnormalvines": "Генерировать стандартные лоз",
+	"options.skyworld.hasbushes": "Генерировать кусты",
+	"options.skyworld.hasocean": "Генерировать океан",
+	"options.skyworld.type.flat_sphere": "Остров - уплощённая сфера",
+	"options.skyworld.type.cone": "Перевёрнутый конический остров",
+	"options.skyworld.type.sphere": "Остров - сферический булыжник",
+	"options.skyworld.type.double_cone": "Двойной конический остров",
+	"options.skyworld.type.tall_sphere": "Вытянутый остров"
 }

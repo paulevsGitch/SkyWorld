@@ -8,6 +8,8 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.surfacebuilder.SurfaceConfig;
+import paulevs.skyworld.generator.SkyChunkGenerator;
+import paulevs.skyworld.generator.SkyWorldChunkGeneratorConfig;
 import paulevs.skyworld.math.MHelper;
 import paulevs.skyworld.math.SDF;
 
@@ -22,6 +24,7 @@ public class IslandConeGenerator extends IslandGenerator
 	private float r2;
 	private float r3;
 	private float blend;
+	private boolean isStructureBasement = false;
 	
 	@Override
 	public void initValues(BlockPos center, int radius)
@@ -38,7 +41,10 @@ public class IslandConeGenerator extends IslandGenerator
 		this.noisePower = radius * 0.15F;
 		this.noiseScale = 0.5F / (float) Math.log(radius);
 		if (radius > 64)
+		{
 			this.noiseScale *= 0.3F;
+			isStructureBasement = true;
+		}
 	}
 
 	@Override
@@ -55,6 +61,8 @@ public class IslandConeGenerator extends IslandGenerator
 	@Override
 	public void generate(IWorld world, ChunkGenerator<?> generator, Random random, BlockBox box, ChunkPos pos, BlockPos center, int radius)
 	{
+		if (isStructureBasement)
+			SkyChunkGenerator.resetHeightmap();
 		HEIGHTMAP.clear();
 		for (int x = box.minX; x <= box.maxX; x++)
 		{
@@ -77,6 +85,8 @@ public class IslandConeGenerator extends IslandGenerator
 							{
 								world.setBlockState(B_POS, config.getTopMaterial(), 0);
 								HEIGHTMAP.addHeight(x - box.minX, y, z - box.minZ);
+								if (isStructureBasement)
+									SkyChunkGenerator.setHeight(x & 15, z & 15, y);
 							}
 							else if (isAir(world, B_POS.up(h)))
 								world.setBlockState(B_POS, config.getUnderMaterial(), 0);
@@ -88,6 +98,6 @@ public class IslandConeGenerator extends IslandGenerator
 			}
 		}
 		generateOres(box, world, random, radius);
-		generateBushes(box, world, random, radius);
+		generateFoliage(box, world, random, radius, (SkyWorldChunkGeneratorConfig) generator.getConfig());
 	}
 }
