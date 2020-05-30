@@ -10,7 +10,7 @@ import paulevs.skyworld.structures.features.StructureFeatures;
 public class SkyWorld implements ModInitializer
 {
 	public static final String MOD_ID = "skyworld";
-	public static final ButtonWidget[] BUTTON = new ButtonWidget[1];
+	public static ButtonWidget button_customize;
 	
 	@Override
 	public void onInitialize()

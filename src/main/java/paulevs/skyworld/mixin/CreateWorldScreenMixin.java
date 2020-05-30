@@ -29,6 +29,9 @@ public abstract class CreateWorldScreenMixin extends Screen
 	@Shadow
 	public CompoundTag generatorOptionsTag;
 	
+	@Shadow
+	private boolean moreOptionsOpen;
+	
 	protected CreateWorldScreenMixin(Text title)
 	{
 		super(title);
@@ -38,19 +41,19 @@ public abstract class CreateWorldScreenMixin extends Screen
 	private void onInit(CallbackInfo info)
 	{
 		CreateWorldScreen self = (CreateWorldScreen) (Object) this;
-		SkyWorld.BUTTON[0] = (ButtonWidget) addButton(new ButtonWidget(self.width / 2 + 5, 120, 150, 20, I18n.translate("selectWorld.customizeType"), (buttonWidget) -> {
+		SkyWorld.button_customize = (ButtonWidget) addButton(new ButtonWidget(self.width / 2 + 5, 120, 150, 20, I18n.translate("selectWorld.customizeType"), (buttonWidget) -> {
 			if (LevelGeneratorType.TYPES[this.generatorType] == SkyWorldType.SKY_WORLD)
 			{
 				this.minecraft.openScreen(new CustomizeSkyWorldScreen(self, generatorOptionsTag));
 			}
 		}));
-		SkyWorld.BUTTON[0].visible = false;
+		SkyWorld.button_customize.visible = moreOptionsOpen && (LevelGeneratorType.TYPES[this.generatorType] == SkyWorldType.SKY_WORLD);;
 	}
 	
 	@Inject(method = "setMoreOptionsOpen", at = @At("HEAD"))
 	private void toggleVisibility(boolean moreOptionsOpen, CallbackInfo info)
 	{
-		if (SkyWorld.BUTTON[0] != null)
-			SkyWorld.BUTTON[0].visible = moreOptionsOpen && LevelGeneratorType.TYPES[this.generatorType] == SkyWorldType.SKY_WORLD;
+		if (SkyWorld.button_customize != null)
+			SkyWorld.button_customize.visible = moreOptionsOpen && LevelGeneratorType.TYPES[this.generatorType] == SkyWorldType.SKY_WORLD;
 	}
 }

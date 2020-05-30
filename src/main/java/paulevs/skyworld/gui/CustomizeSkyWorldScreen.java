@@ -136,7 +136,7 @@ public class CustomizeSkyWorldScreen extends Screen
 	protected void openScreenAndEnableButton()
 	{
 		this.minecraft.openScreen(this.parent);
-		if (SkyWorld.BUTTON[0] != null)
-			SkyWorld.BUTTON[0].visible = true;
+		if (SkyWorld.button_customize != null)
+			SkyWorld.button_customize.visible = true;
 	}
 }
