@@ -1,7 +1,11 @@
 package paulevs.skyworld.generator;
 
+import java.util.List;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.EntityCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.Mutable;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.ChunkRegion;
@@ -122,5 +126,11 @@ public class SkyChunkGenerator extends ChunkGenerator<SkyWorldChunkGeneratorConf
 	public boolean hasOcean()
 	{
 		return hasOcean;
+	}
+
+	@Override
+	public List<Biome.SpawnEntry> getEntitySpawnList(EntityCategory category, BlockPos pos)
+	{
+		return this.getBiomeSource().getBiomeForNoiseGen(pos.getX(), pos.getY(), pos.getZ()).getEntitySpawnList(category);
 	}
 }
