@@ -36,6 +36,12 @@ public class SDF
 		float h = MathHelper.clamp(0.5F + 0.5F * (d2 - d1) / k, 0F, 1F);
 		return MathHelper.lerp(h, d2, d1) - k * h * (1F - h);
 	}
+
+	public static float smoothIntersection( float d1, float d2, float k )
+	{
+		float h = clamp(0.5F - 0.5F * (d2-d1) / k, 0, 1);
+		return mix(d2, d1, h) + k * h * (1 - h);
+	}
 	
 	public static float sdfEllipsoid(BlockPos pos, BlockPos center, float rx, float ry, float rz)
 	{
@@ -53,5 +59,15 @@ public class SDF
 	public static float length(float a, float b, float c)
 	{
 		return (float) Math.sqrt(a * a + b * b + c * c);
+	}
+	
+	public static float clamp(float x, float min, float max)
+	{
+		return x < min ? min : x > max ? max : x;
+	}
+	
+	public static float mix(float a, float b, float mix)
+	{
+		return a * (1 - mix) + b * mix;
 	}
 }

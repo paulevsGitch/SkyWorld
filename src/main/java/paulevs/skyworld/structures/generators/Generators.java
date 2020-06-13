@@ -11,9 +11,13 @@ public class Generators
 {
 	private static final List<String> GENERATOR_LIST;
 	private static final Map<String, Class<? extends IslandGenerator>> GENERATORS;
+	public static final IslandGenerator FEATURE_ISLAND = new IslandFeatureGenerator().setName("feature");
 	
 	public static IslandGenerator getGenerator(String name)
 	{
+		if (name.equals("feature"))
+			return FEATURE_ISLAND;
+		
 		Class<? extends IslandGenerator> gen = GENERATORS.get(name);
 		try
 		{

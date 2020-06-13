@@ -5,6 +5,7 @@ import java.util.Random;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.Heightmap.Type;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.surfacebuilder.SurfaceConfig;
@@ -12,7 +13,7 @@ import paulevs.skyworld.generator.SkyWorldChunkGeneratorConfig;
 import paulevs.skyworld.math.MHelper;
 import paulevs.skyworld.math.SDF;
 
-public class IslandConeGenerator extends IslandGenerator
+public class IslandFeatureGenerator extends IslandGenerator
 {
 	private float noisePower;
 	private float noiseScale;
@@ -29,19 +30,15 @@ public class IslandConeGenerator extends IslandGenerator
 	{
 		this.h1 = (int) Math.ceil(radius * 0.125F);
 		this.h2 = radius - h1;
-		if (this.h2 > 64)
-			this.h2 = 64;
+		if (this.h2 > 32)
+			this.h2 = 32;
 		this.cone1Pos = center.down(h1);
 		this.cone2Pos = center.down(h1 + h2);
 		this.r2 = radius * 0.5F;
 		this.r3 = radius * 0.1F;
 		this.blend = radius * 0.5F;
 		this.noisePower = radius * 0.15F;
-		this.noiseScale = 0.5F / (float) Math.log(radius);
-		if (radius > 64)
-		{
-			this.noiseScale *= 0.3F;
-		}
+		this.noiseScale = (0.5F / (float) Math.log(radius)) * 0.75F;
 	}
 
 	@Override
@@ -54,7 +51,7 @@ public class IslandConeGenerator extends IslandGenerator
 		box.maxY = center.getY() + radius / 8;
 		box.maxZ = center.getZ() + radius;
 	}
-
+	
 	@Override
 	public void generate(IWorld world, ChunkGenerator<?> generator, Random random, BlockBox box, ChunkPos pos, BlockPos center, int radius)
 	{
@@ -62,15 +59,30 @@ public class IslandConeGenerator extends IslandGenerator
 		for (int x = box.minX; x <= box.maxX; x++)
 		{
 			B_POS.setX(x);
+			
+			float dx = (float) (x - cone1Pos.getX()) / radius;
+			dx *= dx;
+			
 			for (int z = box.minZ; z <= box.maxZ; z++)
 			{
 				B_POS.setZ(z);
+				
+				float dz = (float) (z - cone1Pos.getZ()) / radius;
+				dz *= dz;
+				
+				float d = dx + dz;
+				d *= d;
+				d = 1 - d;
+				if (d > 0.98)
+					d = 1;
+				
 				SurfaceConfig config = world.getBiome(B_POS).getSurfaceConfig();
 				int h = random.nextInt(3) + 2;
-				for (int y = box.maxY; y >= box.minY; y--)
+				int ymax = (int) Math.ceil(generator.getHeightInGround(x, z, Type.WORLD_SURFACE) * d);
+				for (int y = ymax; y >= box.minY; y--)
 				{
 					B_POS.setY(y);
-					float d = SDF.smoothUnion(SDF.coneSDF(B_POS, cone1Pos, h1, r2, radius), SDF.coneSDF(B_POS, cone2Pos, h2, r3, r2), blend);
+					d = SDF.smoothUnion(SDF.coneSDF(B_POS, cone1Pos, h1, r2, radius), SDF.coneSDF(B_POS, cone2Pos, h2, r3, r2), blend);
 					if (d < 0)
 					{
 						d += MHelper.noise(B_POS, noiseScale) * noisePower;
