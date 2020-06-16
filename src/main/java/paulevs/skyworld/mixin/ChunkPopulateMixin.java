@@ -39,9 +39,13 @@ public abstract class ChunkPopulateMixin<C extends ChunkGeneratorConfig>
 		if (region.getWorld().getGeneratorType() == SkyWorldType.SKY_WORLD)
 		{
 			@SuppressWarnings("unchecked")
-			SkyChunkGenerator self = (SkyChunkGenerator) (ChunkGenerator<C>) (Object) this;
-			if (self.hasOcean())
-				generate(region, 128);
+			ChunkGenerator<C> self = (ChunkGenerator<C>) (Object) this;
+			if (self instanceof SkyChunkGenerator)
+			{
+				SkyChunkGenerator sky = (SkyChunkGenerator) self;
+				if (sky.hasOcean())
+					generate(region, 128);
+			}
 		}
 	}
 	
