@@ -1,14 +1,17 @@
 package paulevs.skyworld.mixin;
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import net.minecraft.entity.EntityCategory;
 import net.minecraft.structure.StructureManager;
 import net.minecraft.structure.StructureStart;
 import net.minecraft.util.crash.CrashException;
@@ -105,5 +108,14 @@ public abstract class ChunkPopulateMixin<C extends ChunkGeneratorConfig>
 	        Biome biome = biomeAccess.getBiome(new BlockPos(chunkPos.getStartX() + 9, 0, chunkPos.getStartZ() + 9));
 			structure.addIsland(chunkGenerator, structureManager, chunkPos.x, chunkPos.z, biome);
 		}
+	}
+
+	@Inject(method = "getEntitySpawnList", at = @At("HEAD"), cancellable = true)
+	private void getSpawns(EntityCategory category, BlockPos pos, CallbackInfoReturnable<List<Biome.SpawnEntry>> info)
+	{
+		@SuppressWarnings("unchecked")
+		ChunkGenerator<C> self = (ChunkGenerator<C>) (Object) this;
+		info.setReturnValue(self.getBiomeSource().getBiomeForNoiseGen(pos.getX(), pos.getY(), pos.getZ()).getEntitySpawnList(category));
+		info.cancel();
 	}
 }
